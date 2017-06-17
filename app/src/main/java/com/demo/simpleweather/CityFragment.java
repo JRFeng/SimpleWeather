@@ -229,22 +229,31 @@ public class CityFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 optionMenu.dismiss();
-                Snackbar.make(ibBottomMenu, "删除中...", Snackbar.LENGTH_LONG)
-                        .setAction("取消", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Toast.makeText(getContext(), "已取消", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int event) {
-                        super.onDismissed(transientBottomBar, event);
-                        CityManager.getInstance().deleteCity(cityName);
-                        Toast.makeText(WApplication.getContext(), "已删除", Toast.LENGTH_SHORT).show();
-                    }
-                }).show();
+                if (!isHomePage) {
+                    Snackbar.make(ibBottomMenu, "删除中...", Snackbar.LENGTH_LONG)
+                            .setAction("取消", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Toast.makeText(getContext(), "已取消", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            ((MainActivity)getActivity()).scrollToPrevious();
+                            CityManager.getInstance().deleteCity(cityName);
+                            Toast.makeText(WApplication.getContext(), "已删除", Toast.LENGTH_SHORT).show();
+                        }
+                    }).show();
+                } else {
+                    Snackbar.make(ibBottomMenu, "主页面无法删除", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
+    }
+
+    public void reloadData(){
+        initViews(weather);
     }
 
     private void saveToDisk() {

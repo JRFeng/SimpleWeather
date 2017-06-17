@@ -22,7 +22,7 @@ import java.util.List;
 
 
 /*
-* 添加、删除城市功能异常
+* TODO 删除城市功能存在异常
 */
 public class CityManager {
     private static CityManager mInstance;
@@ -51,6 +51,7 @@ public class CityManager {
             mCityNames.add("N/A");
             mCityNames.add("北京市");
             mCityNames.add("广州市");
+            mCityNames.add("拉萨市");
             location();
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

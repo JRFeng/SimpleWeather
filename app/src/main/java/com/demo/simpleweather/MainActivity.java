@@ -12,6 +12,7 @@ import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity {
     private CityManager cityManager;
+    private ViewPager vpContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("App", "onCreate");
 
-        ViewPager vpContainer = (ViewPager) findViewById(R.id.vpContainer);
-        cityManager =CityManager.getInstance();
+        vpContainer = (ViewPager) findViewById(R.id.vpContainer);
+        cityManager = CityManager.getInstance();
         vpContainer.setAdapter(cityManager.getCityPagerAdapter(getSupportFragmentManager()));
 
         WindowManager windowManager = getWindowManager();
@@ -36,5 +37,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         cityManager.saveData();
+    }
+
+    public void scrollToPrevious() {
+        vpContainer.setCurrentItem(vpContainer.getCurrentItem() - 1, true);
     }
 }
