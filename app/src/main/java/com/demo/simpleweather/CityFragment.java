@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.PopupMenuCompat;
@@ -106,6 +108,14 @@ public class CityFragment extends Fragment {
         initViews(weather);
         addViewListener();
         return pageView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        if (weather.isNA()){
+//            refreshWeather();
+//        }
     }
 
     @Override
@@ -212,6 +222,27 @@ public class CityFragment extends Fragment {
             @Override
             public void onRefresh() {
                 refreshWeather();
+            }
+        });
+
+        menuDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                optionMenu.dismiss();
+                Snackbar.make(ibBottomMenu, "删除中...", Snackbar.LENGTH_LONG)
+                        .setAction("取消", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(getContext(), "已取消", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        CityManager.getInstance().deleteCity(cityName);
+                        Toast.makeText(WApplication.getContext(), "已删除", Toast.LENGTH_SHORT).show();
+                    }
+                }).show();
             }
         });
     }
