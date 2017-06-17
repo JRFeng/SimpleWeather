@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--空气质量：优-->
+    <color name="colorBlue">#2196F3</color>
+    <color name="colorBlueDark">#1976D2</color>
+
+    <!--空气质量：良-->
+    <color name="colorGreen">#8BC34A</color>
+    <color name="colorGreenDark">#689F38</color>
+
+    <!--空气质量：轻度污染-->
+    <color name="colorLime">#CDDC39</color>
+    <color name="colorLimeDark">#AFB42B</color>
+
+    <!--空气质量：中度污染-->
+    <color name="colorOrange">#FF9800</color>
+    <color name="colorOrangeDark">#F57C00</color>
+
+    <!--空气质量：重度污染-->
+    <color name="colorDeepOrange">#FF5722</color>
+    <color name="colorDeepOrangeDark">#E64A19</color>
+
+    <!--空气质量：严重污染-->
+    <color name="colorRed">#F44336</color>
+    <color name="colorRedDark">#D32F2F</color>
+
+</resources>

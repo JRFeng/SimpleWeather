@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:id="@+id/page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBlue"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/ibHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/ic_home"
+                android:visibility="gone"
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/tvCityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="@string/default_message"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"/>
+
+            <ImageView
+                android:id="@+id/ivLocationImage"
+                android:layout_width="wrap_content"
+                android:layout_height="27dp"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@id/tvCityName"
+                android:scaleType="center"
+                android:src="@mipmap/ic_place_white_18dp"
+                android:visibility="gone"
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/ibMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/ic_more"
+                tools:ignore="RtlHardcoded"/>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tvCurrentTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="120dp"
+            android:text="@string/default_message"
+            android:textSize="112sp"/>
+
+        <TextView
+            android:id="@+id/tvDegree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120sp"
+            android:layout_toRightOf="@id/tvCurrentTemp"
+            android:text="&#176;"
+            android:textSize="112sp"
+            tools:ignore="HardcodedText,RtlHardcoded"/>
+
+        <!--<TextView-->
+            <!--android:id="@+id/tvMinTemp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignBaseline="@id/tvMaxTemp"-->
+            <!--android:layout_alignLeft="@id/tvDegree"-->
+            <!--android:layout_marginTop="120sp"-->
+            <!--android:padding="8dp"-->
+            <!--android:text="@string/default_message"-->
+            <!--android:textSize="24sp"-->
+            <!--tools:ignore="RtlHardcoded"/>-->
+
+        <TextView
+            android:id="@+id/tvWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvCurrentTemp"
+            android:layout_centerHorizontal="true"
+            android:text="@string/default_message"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/tvAirQuality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:text="空气质量: N/A"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText,RtlHardcoded"/>
+
+        <ImageButton
+            android:id="@+id/ibBottomMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_arrow_up"/>
+
+    </RelativeLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>
