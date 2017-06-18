@@ -4,17 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="true"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBlue"
-        android:clipToPadding="true"
-        android:fitsSystemWindows="true">
+        android:paddingTop="24dp">
 
         <RelativeLayout
             android:layout_width="match_parent"

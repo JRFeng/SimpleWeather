@@ -170,11 +170,11 @@ public class CityManager {
         } catch (IOException | ClassNotFoundException e) {
             L.d(WeatherApplication.TAG, "Restore city fail, create a empty city list");
             mCityNames = new LinkedList<>();
-            mCityNames.add("N/A");
+//            mCityNames.add("N/A");
 
 //            //Test Start 发布时请注释掉
-//            mCityNames.add("北京市");
-//            mCityNames.add("上海市");
+            mCityNames.add("北京市");
+            mCityNames.add("上海市");
             //Test End
         }
     }

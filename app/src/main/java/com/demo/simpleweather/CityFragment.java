@@ -117,6 +117,7 @@ public class CityFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
         refreshView();
+        refreshBgColor();
     }
 
     @Override
@@ -152,6 +153,9 @@ public class CityFragment extends Fragment {
         if (elapseMinute >= 30) {
             refreshWeather();
             return true;
+        }else if(weather.isNA()){
+            refreshWeather();
+            return true;
         }
 
         return false;
@@ -177,10 +181,9 @@ public class CityFragment extends Fragment {
             tvCurrentTmp.setText(weather.getCurrentTmp());
             tvWeatherStatus.setText(weather.getWeatherStatus());
             tvAirQuality.setText(weather.getAirQualityString());
-
-            container.setBackgroundResource(weather.getWeatherColorId());
-            contentView.setBackgroundResource(weather.getWeatherColorId());
         }
+
+        refreshBgColor();
     }
 
 
@@ -190,6 +193,10 @@ public class CityFragment extends Fragment {
 
         if (!swipeRefresh.isRefreshing()) {
             swipeRefresh.setRefreshing(true);
+        }
+
+        if(!(mainActivity.getCurrentPagePosition() == getPosition())){
+            return;
         }
 
         L.d(WeatherApplication.TAG, "refreshWeather");
@@ -218,8 +225,8 @@ public class CityFragment extends Fragment {
                     @Override
                     public void run() {
                         weather.update(responseString);
-                        Toast.makeText(getContext(), "刷新成功", Toast.LENGTH_SHORT).show();
                         swipeRefresh.setRefreshing(false);
+                        Toast.makeText(getContext(), "刷新成功", Toast.LENGTH_SHORT).show();
                         refreshView();
                     }
                 });
@@ -281,7 +288,7 @@ public class CityFragment extends Fragment {
             });
         }
         tvCityName.setText(cityName);
-        container.setBackgroundResource(R.color.colorBlue);
+
     }
 
     private void initViewListener() {
@@ -308,6 +315,10 @@ public class CityFragment extends Fragment {
                 //TODO 待完成
             }
         });
+    }
+
+    private void refreshBgColor(){
+        contentView.setBackgroundResource(weather.getWeatherColorId());
     }
 
     /*
