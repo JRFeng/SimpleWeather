@@ -11,13 +11,13 @@ import org.json.JSONObject;
 
 public class Weather implements Parcelable {
     private String weatherStatus;
-    private String currentTemp;
+    private String currentTmp;
     private int airQuality;
 
     private String forecastWeather1;
-    private String forecastTemp1;
+    private String forecastTmp1;
     private String forecastWeather2;
-    private String forecastTemp2;
+    private String forecastTmp2;
 
     public static final int AIR_GOOD = 0;
     public static final int AIR_FINE = 1;
@@ -29,36 +29,36 @@ public class Weather implements Parcelable {
 
     public Weather() {
         weatherStatus = "N/A";
-        currentTemp = "N/A";
+        currentTmp = "N/A";
         airQuality = AIR_UNKNOWN;
 
         forecastWeather1 = "N/A";
-        forecastTemp1 = "N/A";
+        forecastTmp1 = "N/A";
         forecastWeather2 = "N/A";
-        forecastTemp2 = "N/A";
+        forecastTmp2 = "N/A";
     }
 
-//    public Weather(String weatherStatus, String currentTemp, String minTemp, int airQuality,
-//                   String forecastWeather1, String forecastTemp1, String forecastWeather2, String forecastTemp2) {
+//    public Weather(String weatherStatus, String currentTmp, String minTemp, int airQuality,
+//                   String forecastWeather1, String forecastTmp1, String forecastWeather2, String forecastTmp2) {
 //        this.weatherStatus = weatherStatus;
-//        this.currentTemp = currentTemp;
+//        this.currentTmp = currentTmp;
 //        this.minTemp = minTemp + "\u00B0";
 //        this.airQuality = airQuality;
 //
 //        this.forecastWeather1 = forecastWeather1;
-//        this.forecastTemp1 = forecastTemp1;
+//        this.forecastTmp1 = forecastTmp1;
 //        this.forecastWeather2 = forecastWeather2;
-//        this.forecastTemp2 = forecastTemp2;
+//        this.forecastTmp2 = forecastTmp2;
 //    }
 
-    protected Weather(Parcel in) {
+    private Weather(Parcel in) {
         weatherStatus = in.readString();
-        currentTemp = in.readString();
+        currentTmp = in.readString();
         airQuality = in.readInt();
         forecastWeather1 = in.readString();
-        forecastTemp1 = in.readString();
+        forecastTmp1 = in.readString();
         forecastWeather2 = in.readString();
-        forecastTemp2 = in.readString();
+        forecastTmp2 = in.readString();
     }
 
     @Override
@@ -69,12 +69,12 @@ public class Weather implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(weatherStatus);
-        parcel.writeString(currentTemp);
+        parcel.writeString(currentTmp);
         parcel.writeInt(airQuality);
         parcel.writeString(forecastWeather1);
-        parcel.writeString(forecastTemp1);
+        parcel.writeString(forecastTmp1);
         parcel.writeString(forecastWeather2);
-        parcel.writeString(forecastTemp2);
+        parcel.writeString(forecastTmp2);
     }
 
     public static final Creator<Weather> CREATOR = new Creator<Weather>() {
@@ -98,12 +98,12 @@ public class Weather implements Parcelable {
         this.weatherStatus = weatherStatus;
     }
 
-    public String getCurrentTemp() {
-        return currentTemp;
+    public String getCurrentTmp() {
+        return currentTmp;
     }
 
-    public void setCurrentTemp(String currentTemp) {
-        this.currentTemp = currentTemp;
+    public void setCurrentTmp(String currentTemp) {
+        this.currentTmp = currentTemp;
     }
 
 
@@ -123,12 +123,12 @@ public class Weather implements Parcelable {
         this.forecastWeather1 = forecastWeather1;
     }
 
-    public String getForecastTemp1() {
-        return forecastTemp1;
+    public String getForecastTmp1() {
+        return forecastTmp1;
     }
 
-    public void setForecastTemp1(String forecastTemp1) {
-        this.forecastTemp1 = forecastTemp1;
+    public void setForecastTmp1(String forecastTmp1) {
+        this.forecastTmp1 = forecastTmp1;
     }
 
     public String getForecastWeather2() {
@@ -139,12 +139,12 @@ public class Weather implements Parcelable {
         this.forecastWeather2 = forecastWeather2;
     }
 
-    public String getForecastTemp2() {
-        return forecastTemp2;
+    public String getForecastTmp2() {
+        return forecastTmp2;
     }
 
-    public void setForecastTemp2(String forecastTemp2) {
-        this.forecastTemp2 = forecastTemp2;
+    public void setForecastTmp2(String forecastTmp2) {
+        this.forecastTmp2 = forecastTmp2;
     }
 
     public String getAirQualityString() {
@@ -189,11 +189,30 @@ public class Weather implements Parcelable {
             this.weatherStatus = now.getJSONObject("cond").getString("txt");
             L.d("App", "weatherStatus : " + weatherStatus);
 
-            this.currentTemp = now.getString("tmp");
+            this.currentTmp = now.getString("tmp");
 
         } catch (JSONException e) {
             L.e("App", "Update Error");
             e.printStackTrace();
+        }
+    }
+
+    public int getWeatherColorId(){
+        switch (airQuality) {
+            case Weather.AIR_GOOD:
+                return R.color.colorBlue;
+            case Weather.AIR_FINE:
+                return R.color.colorGreen;
+            case Weather.AIR_SLIGHT_POLLUTION:
+                return R.color.colorLime;
+            case Weather.AIR_MODERATE_POLLUTION:
+                return R.color.colorOrange;
+            case Weather.AIR_HEAVY_POLLUTION:
+                return R.color.colorDeepOrange;
+            case Weather.AIR_SEVERE_POLLUTION:
+                return R.color.colorRed;
+            default:
+                return R.color.colorBlue;
         }
     }
 
@@ -223,12 +242,12 @@ public class Weather implements Parcelable {
     }
 
     public boolean isNA() {
-        String[] array = {weatherStatus, currentTemp, forecastWeather1, forecastTemp1, forecastWeather2, forecastTemp2};
+        String[] array = {weatherStatus, currentTmp, forecastWeather1, forecastTmp1, forecastWeather2, forecastTmp2};
         for (String i : array) {
-            if (i.equals("N/A")) {
-                return true;
+            if (!i.equals("N/A")) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

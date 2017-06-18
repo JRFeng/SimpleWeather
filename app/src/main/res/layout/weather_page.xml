@@ -66,7 +66,7 @@
 
 
         <TextView
-            android:id="@+id/tvCurrentTemp"
+            android:id="@+id/tvCurrentTmp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -79,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="120sp"
-            android:layout_toRightOf="@id/tvCurrentTemp"
+            android:layout_toRightOf="@id/tvCurrentTmp"
             android:text="&#176;"
             android:textSize="112sp"
             tools:ignore="HardcodedText,RtlHardcoded"/>
@@ -97,10 +97,10 @@
             <!--tools:ignore="RtlHardcoded"/>-->
 
         <TextView
-            android:id="@+id/tvWeather"
+            android:id="@+id/tvWeatherStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvCurrentTemp"
+            android:layout_below="@id/tvCurrentTmp"
             android:layout_centerHorizontal="true"
             android:text="@string/default_message"
             android:textSize="24sp"/>
@@ -118,7 +118,7 @@
             tools:ignore="HardcodedText,RtlHardcoded"/>
 
         <ImageButton
-            android:id="@+id/ibBottomMenu"
+            android:id="@+id/ibArrowUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.widget.Toast;
 
 import com.demo.simpleweather.utils.L;
 
@@ -21,6 +22,9 @@ public class CityManager {
     private FragmentStatePagerAdapter mPagerAdapter;
 
     private final String cityFileName = "city_names.dat";
+
+    private String tempCityName;
+    private int tempCityPosition;
 
     public CityManager(FragmentManager fragmentManager) {
         createPagerAdapter(fragmentManager);
@@ -50,6 +54,7 @@ public class CityManager {
 
     /**
      * 返回一个ViewPager适配器
+     *
      * @return FragmentStatePagerAdapter
      */
     public FragmentStatePagerAdapter getPagerAdapter() {
@@ -58,53 +63,101 @@ public class CityManager {
 
     /**
      * 在城市列表的末尾添加指定城市
+     *
      * @param cityName 城市名称
      */
     public void addCity(String cityName) {
-        mCityNames.add(cityName);
+        if (!contains(cityName)) {
+            mCityNames.add(cityName);
 
-        CityFragment cityFragment = new CityFragment();
-        Bundle args = new Bundle();
-        args.putString(CityFragment.KEY_CITY_NAME, cityName);
-        args.putBoolean(CityFragment.KEY_IS_HOME, false);
-        args.putInt(CityFragment.KEY_POSITION, mCityNames.size() - 1);
-        cityFragment.setArguments(args);
-        mCityFragments.add(cityFragment);
+            CityFragment cityFragment = new CityFragment();
+            Bundle args = new Bundle();
+            args.putString(CityFragment.KEY_CITY_NAME, cityName);
+            args.putBoolean(CityFragment.KEY_IS_HOME, false);
+            args.putInt(CityFragment.KEY_POSITION, mCityNames.size() - 1);
+            cityFragment.setArguments(args);
+            mCityFragments.add(cityFragment);
 
-        mPagerAdapter.notifyDataSetChanged();
+            mPagerAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
      * 在指定 index 位置添加城市
-     * @param index 要添加到的位置
+     *
+     * @param index    要添加到的位置
      * @param cityName 城市名称
      */
     public void addCity(int index, String cityName) {
-        mCityNames.add(index, cityName);
+        if (!contains(cityName)) {
+            mCityNames.add(index, cityName);
 
-        CityFragment cityFragment = new CityFragment();
-        Bundle args = new Bundle();
-        args.putString(CityFragment.KEY_CITY_NAME, cityName);
-        args.putBoolean(CityFragment.KEY_IS_HOME, false);
-        args.putInt(CityFragment.KEY_POSITION, mCityNames.size() - 1);
-        cityFragment.setArguments(args);
-        mCityFragments.add(index, cityFragment);
+            CityFragment cityFragment = new CityFragment();
+            Bundle args = new Bundle();
+            args.putString(CityFragment.KEY_CITY_NAME, cityName);
+            args.putBoolean(CityFragment.KEY_IS_HOME, index == 0);
+            args.putInt(CityFragment.KEY_POSITION, index);
+            cityFragment.setArguments(args);
+            mCityFragments.add(index, cityFragment);
 
-        mPagerAdapter.notifyDataSetChanged();
+            for (int i = index + 1; i < mCityFragments.size(); i++) {
+                mCityFragments.get(i).getArguments().putInt(CityFragment.KEY_POSITION, i);
+                mCityFragments.get(i).getArguments().putBoolean(CityFragment.KEY_IS_HOME, i == 0);
+            }
+
+            mPagerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 将定位到的城市添加进城市列表
+     *
+     * @param cityName 当前定位到的城市
+     */
+    public void addLocationCity(String cityName) {
+        if (mCityNames.get(0).equals("N/A")) {
+            deleteCity(0);
+            addCity(0, cityName);
+        }
+
+        if (!cityName.equals(mCityNames.get(0))){
+            addCity(0, cityName);
+        }
     }
 
     /**
      * 删除指定 index 处的页面
+     *
      * @param index 要删除页面的位置
      */
     public void deleteCity(int index) {
-        mCityNames.remove(index);
-        mCityFragments.remove(index);
-        for (int i = index; i < mCityFragments.size(); i++) {
-            mCityFragments.get(index).getArguments().putInt(CityFragment.KEY_POSITION, index);
+        if (!mCityFragments.get(index).isHomePage() || mCityNames.get(index).equals("N/A")) {
+            tempCityPosition = index;                           //缓存位置
+            tempCityName = mCityNames.remove(index);            //缓存城市名
+            L.d(WeatherApplication.TAG, "Delete : " + tempCityName);
+            mCityFragments.remove(index);
+            for (int i = index; i < mCityFragments.size(); i++) {
+                mCityFragments.get(index).getArguments().putInt(CityFragment.KEY_POSITION, i);
+                mCityFragments.get(i).getArguments().putBoolean(CityFragment.KEY_IS_HOME, i == 0);
+            }
+            mPagerAdapter.notifyDataSetChanged();
+        } else {
+            Toast.makeText(WeatherApplication.getContext(), "主页面无法删除", Toast.LENGTH_SHORT).show();
         }
-        mPagerAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * 撤销删除
+     */
+    public void undoDelete() {
+        addCity(tempCityPosition, tempCityName);
+        Toast.makeText(WeatherApplication.getContext(), "撤销成功", Toast.LENGTH_SHORT).show();
+    }
+
+    public CityFragment getCityFragment(int position){
+        return mCityFragments.get(position);
+    }
+
 
     //*******************************private********************************************
 
@@ -118,11 +171,17 @@ public class CityManager {
             L.d(WeatherApplication.TAG, "Restore city fail, create a empty city list");
             mCityNames = new LinkedList<>();
             mCityNames.add("N/A");
+
+//            //Test Start 发布时请注释掉
+//            mCityNames.add("北京市");
+//            mCityNames.add("上海市");
+            //Test End
         }
     }
 
     private void createPagerAdapter(FragmentManager fragmentManager) {
         restoreCityNames();
+
         mCityFragments = new LinkedList<>();
         for (int i = 0; i < mCityNames.size(); i++) {
             CityFragment cityFragment = new CityFragment();
@@ -136,5 +195,14 @@ public class CityManager {
         }
 
         mPagerAdapter = new CityPagerAdapter(fragmentManager, mCityFragments);
+    }
+
+    private boolean contains(String cityName) {
+        for (int i = 0; i < mCityNames.size(); i++) {
+            if (cityName.equals(mCityNames.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
