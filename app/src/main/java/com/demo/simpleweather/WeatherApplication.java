@@ -7,22 +7,26 @@ import android.content.Context;
 import okhttp3.OkHttpClient;
 
 
-public class WApplication extends Application {
-    private static WApplication wApplication;
+public class WeatherApplication extends Application {
+    private static WeatherApplication weatherApplication;
     private OkHttpClient okHttpClient;
     private int dpi;
 
-    public WApplication() {
-        wApplication = this;
+    public static final String TAG = "SimpleWeather";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        weatherApplication = this;
         okHttpClient = new OkHttpClient();
     }
 
-    public static WApplication getInstance() {
-        return wApplication;
+    public static WeatherApplication getInstance() {
+        return weatherApplication;
     }
 
     public static Context getContext() {
-        return wApplication;
+        return weatherApplication;
     }
 
     public OkHttpClient getOkHttpClient() {

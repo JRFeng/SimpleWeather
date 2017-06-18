@@ -4,12 +4,8 @@ package com.demo.simpleweather;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.widget.Toast;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
 import com.demo.simpleweather.utils.L;
 
 import java.io.IOException;
@@ -18,157 +14,127 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
-import java.util.List;
 
-
-/*
-* TODO 删除城市功能存在异常
-*/
 public class CityManager {
-    private static CityManager mInstance;
-    private List<String> mCityNames;
-    private List<CityFragment> mCityFragments;
-    private CityPagerAdapter mPagerAdapter;
+    private LinkedList<String> mCityNames;
+    private LinkedList<CityFragment> mCityFragments;
+    private FragmentStatePagerAdapter mPagerAdapter;
 
-    private static final String CityFileName = "city_names.dat";
+    private final String cityFileName = "city_names.dat";
 
-    private CityManager() {
-        initCityNames();
-        initCityFragments();
+    public CityManager(FragmentManager fragmentManager) {
+        createPagerAdapter(fragmentManager);
     }
 
-    //*********************************************************
+    //******************************public**********************************
 
-    private void initCityNames() {
-        //TODO,待优化。因为是在主线程中进行IO，所有有ANR的风险。
-        try {
-            InputStream inputStream = WApplication.getContext().openFileInput(CityFileName);
-            ObjectInputStream input = new ObjectInputStream(inputStream);
-            mCityNames = (LinkedList<String>) input.readObject();
-        } catch (IOException e) {
-            mCityNames = new LinkedList<>();
-            L.e("SimpleWeather", "IOException, Restore Error");
-            mCityNames.add("N/A");
-            mCityNames.add("北京市");
-            mCityNames.add("广州市");
-            mCityNames.add("拉萨市");
-            location();
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void location() {
-
-        AMapLocationClientOption locationClientOption = new AMapLocationClientOption();
-        locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-        locationClientOption.setOnceLocation(true);
-        locationClientOption.setOnceLocationLatest(true);
-        locationClientOption.setNeedAddress(true);
-
-        AMapLocationClient locationClient = new AMapLocationClient(WApplication.getContext());
-        locationClient.setLocationListener(new AMapLocationListener() {
+    /**
+     * 保存城市列表到本地
+     */
+    public void saveCityNames() {
+        new Thread() {
             @Override
-            public void onLocationChanged(AMapLocation aMapLocation) {
-                String city = aMapLocation.getCity();
-                L.d("App", "Locate : " + city);
-                addLocationCity(city);
-                if (mCityNames.contains("N/A")) {
-                    deleteCity("N/A");
+            public void run() {
+                try {
+                    OutputStream outputStream = WeatherApplication.getContext().openFileOutput(cityFileName, Context.MODE_PRIVATE);
+                    ObjectOutputStream output = new ObjectOutputStream(outputStream);
+                    output.writeObject(mCityNames);
+                    output.close();
+                } catch (IOException e) {
+                    L.e(WeatherApplication.TAG, "Save city list error!!! maybe something is wrong!!!");
+                    e.printStackTrace();
                 }
             }
-        });
-        locationClient.setLocationOption(locationClientOption);
-        locationClient.startLocation();
-        L.d("App", "Start Location");
+        }.start();
     }
 
-    private void addLocationCity(String cityName) {
-        if (!cityName.equals(mCityNames.get(0))) {
-            mCityNames.add(0, cityName);
-
-            Bundle data = new Bundle();
-            data.putString("cityName", cityName);
-            data.putBoolean("isHomePage", true);
-
-            CityFragment fragment = new CityFragment();
-            fragment.setArguments(data);
-
-            mCityFragments.add(0, fragment);
-
-            mCityFragments.get(1).getArguments().putBoolean("isHomePage", false);
-            mPagerAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void initCityFragments() {
-        L.d("App", "initCityFragments");
-
-        mCityFragments = new LinkedList<>();
-        for (int i = 0; i < mCityNames.size(); i++) {
-            Bundle data = new Bundle();
-            data.putString("cityName", mCityNames.get(i));
-            data.putBoolean("isHomePage", i == 0);
-
-            CityFragment fragment = new CityFragment();
-            fragment.setArguments(data);
-
-            mCityFragments.add(fragment);
-        }
-    }
-
-    //**********************************************************
-
-    public static synchronized CityManager getInstance() {
-        L.d("App", "CityManager.getInstance");
-        if (mInstance == null) {
-            mInstance = new CityManager();
-        }
-        return mInstance;
-    }
-
-    public CityPagerAdapter getCityPagerAdapter(FragmentManager fm) {
-        mPagerAdapter = new CityPagerAdapter(fm, mCityFragments);
+    /**
+     * 返回一个ViewPager适配器
+     * @return FragmentStatePagerAdapter
+     */
+    public FragmentStatePagerAdapter getPagerAdapter() {
         return mPagerAdapter;
     }
 
+    /**
+     * 在城市列表的末尾添加指定城市
+     * @param cityName 城市名称
+     */
     public void addCity(String cityName) {
-        if (!mCityNames.contains(cityName)) {
-            mCityNames.add(cityName);
+        mCityNames.add(cityName);
 
-            Bundle data = new Bundle();
-            data.putString("cityName", cityName);
+        CityFragment cityFragment = new CityFragment();
+        Bundle args = new Bundle();
+        args.putString(CityFragment.KEY_CITY_NAME, cityName);
+        args.putBoolean(CityFragment.KEY_IS_HOME, false);
+        args.putInt(CityFragment.KEY_POSITION, mCityNames.size() - 1);
+        cityFragment.setArguments(args);
+        mCityFragments.add(cityFragment);
 
-            CityFragment fragment = new CityFragment();
-            fragment.setArguments(data);
-
-            mCityFragments.add(fragment);
-            mPagerAdapter.notifyDataSetChanged();
-        }
+        mPagerAdapter.notifyDataSetChanged();
     }
 
-    public void deleteCity(String name) {
-        if (mCityNames.size() > 1) {
-            int position = mCityNames.indexOf(name);
-            mCityNames.remove(name);
-            mCityFragments.remove(position);
-            mPagerAdapter.notifyDataSetChanged();
-        } else {
-            Toast.makeText(WApplication.getContext(), "无法删除", Toast.LENGTH_SHORT).show();
-        }
+    /**
+     * 在指定 index 位置添加城市
+     * @param index 要添加到的位置
+     * @param cityName 城市名称
+     */
+    public void addCity(int index, String cityName) {
+        mCityNames.add(index, cityName);
+
+        CityFragment cityFragment = new CityFragment();
+        Bundle args = new Bundle();
+        args.putString(CityFragment.KEY_CITY_NAME, cityName);
+        args.putBoolean(CityFragment.KEY_IS_HOME, false);
+        args.putInt(CityFragment.KEY_POSITION, mCityNames.size() - 1);
+        cityFragment.setArguments(args);
+        mCityFragments.add(index, cityFragment);
+
+        mPagerAdapter.notifyDataSetChanged();
     }
 
-    public void saveData() {
-        //TODO,待优化。因为是在主线程中进行IO，所有有ANR的风险。
+    /**
+     * 删除指定 index 处的页面
+     * @param index 要删除页面的位置
+     */
+    public void deleteCity(int index) {
+        mCityNames.remove(index);
+        mCityFragments.remove(index);
+        for (int i = index; i < mCityFragments.size(); i++) {
+            mCityFragments.get(index).getArguments().putInt(CityFragment.KEY_POSITION, index);
+        }
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
+    //*******************************private********************************************
+
+    //从本地恢复城市列表
+    private void restoreCityNames() {
         try {
-            OutputStream outputStream = WApplication.getContext().openFileOutput(CityFileName, Context.MODE_PRIVATE);
-            ObjectOutputStream output = new ObjectOutputStream(outputStream);
-            output.writeObject(mCityNames);
-            output.close();
-        } catch (IOException e) {
-            L.e("SimpleWeather", "IOException, Save Error");
-            e.printStackTrace();
+            InputStream inputStream = WeatherApplication.getContext().openFileInput(cityFileName);
+            ObjectInputStream input = new ObjectInputStream(inputStream);
+            mCityNames = (LinkedList<String>) input.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            L.d(WeatherApplication.TAG, "Restore city fail, create a empty city list");
+            mCityNames = new LinkedList<>();
+            mCityNames.add("N/A");
         }
+    }
+
+    private void createPagerAdapter(FragmentManager fragmentManager) {
+        restoreCityNames();
+        mCityFragments = new LinkedList<>();
+        for (int i = 0; i < mCityNames.size(); i++) {
+            CityFragment cityFragment = new CityFragment();
+            Bundle args = new Bundle();
+            args.putString(CityFragment.KEY_CITY_NAME, mCityNames.get(i));
+            args.putBoolean(CityFragment.KEY_IS_HOME, i == 0);
+            args.putInt(CityFragment.KEY_POSITION, i);
+            cityFragment.setArguments(args);
+
+            mCityFragments.add(cityFragment);
+        }
+
+        mPagerAdapter = new CityPagerAdapter(fragmentManager, mCityFragments);
     }
 }

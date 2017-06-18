@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.demo.simpleweather.utils.L;
+
 
 public class MainActivity extends AppCompatActivity {
     private CityManager cityManager;
@@ -19,27 +21,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("App", "onCreate");
+        L.d("App", "onCreate");
 
         vpContainer = (ViewPager) findViewById(R.id.vpContainer);
-        cityManager = CityManager.getInstance();
-        vpContainer.setAdapter(cityManager.getCityPagerAdapter(getSupportFragmentManager()));
+        cityManager = new CityManager(getSupportFragmentManager());
+        vpContainer.setAdapter(cityManager.getPagerAdapter());
 
         WindowManager windowManager = getWindowManager();
         Display display = windowManager.getDefaultDisplay();
         DisplayMetrics displayMetrics = new DisplayMetrics();
         display.getRealMetrics(displayMetrics);
 
-        WApplication.getInstance().setDPI(displayMetrics.densityDpi);
+        WeatherApplication.getInstance().setDPI(displayMetrics.densityDpi);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cityManager.saveData();
-    }
-
-    public void scrollToPrevious() {
-        vpContainer.setCurrentItem(vpContainer.getCurrentItem() - 1, true);
+        cityManager.saveCityNames();
     }
 }
