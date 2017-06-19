@@ -3,6 +3,9 @@ package com.demo.simpleweather;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
 import okhttp3.OkHttpClient;
 
@@ -12,6 +15,8 @@ public class WeatherApplication extends Application {
     private OkHttpClient okHttpClient;
     private int dpi;
 
+    private static int savedData;
+
     public static final String TAG = "SimpleWeather";
 
     @Override
@@ -19,6 +24,13 @@ public class WeatherApplication extends Application {
         super.onCreate();
         weatherApplication = this;
         okHttpClient = new OkHttpClient();
+
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getRealMetrics(displayMetrics);
+
+        dpi = displayMetrics.densityDpi;
     }
 
     public static WeatherApplication getInstance() {
@@ -33,11 +45,15 @@ public class WeatherApplication extends Application {
         return okHttpClient;
     }
 
-    public void setDPI(int ppi) {
-        this.dpi = ppi;
+    public int getPx(int dp) {
+        return dp * dpi / 160;
     }
 
-    public int getDPI() {
-        return dpi;
+    public static void setData(int data) {
+        savedData = data;
+    }
+
+    public static int getData() {
+        return savedData;
     }
 }

@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorGrayLight">#BFFF</color>
+
     <!--空气质量：优-->
     <color name="colorBlue">#2196F3</color>
     <color name="colorBlueDark">#1976D2</color>

@@ -2,9 +2,12 @@ package com.demo.simpleweather;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +41,6 @@ public class CityFragment extends Fragment {
     private long lastRefreshTime;  //用于记录上一次刷新的时间
 
     private MainActivity mainActivity;
-    private View container;
     private View contentView;
 
     private TextView tvCityName;
@@ -52,6 +55,9 @@ public class CityFragment extends Fragment {
     private ImageButton ibArrowUp;
 
     private SwipeRefreshLayout swipeRefresh;
+
+    private PopupWindow popupWindow;
+    private View popupView;
 
     //*********************public***********************
 
@@ -84,7 +90,6 @@ public class CityFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.container = container;
         contentView = inflater.inflate(R.layout.weather_page, container, false);
 
         tvCityName = (TextView) contentView.findViewById(R.id.tvCityName);
@@ -150,15 +155,18 @@ public class CityFragment extends Fragment {
 
         L.d(WeatherApplication.TAG, "Elapse Minute : " + elapseMinute);
 
-        if (elapseMinute >= 30) {
+        if (elapseMinute >= 15) {
             refreshWeather();
+            L.d(WeatherApplication.TAG, cityName + " : suggestRefreshWeather : 接受（时间到）");
             return true;
-        }else if(weather.isNA()){
+        } else if (weather.isNA()) {
             refreshWeather();
+            L.d(WeatherApplication.TAG, cityName + " : suggestRefreshWeather : 接受（IsNa）");
             return true;
+        } else {
+            L.d(WeatherApplication.TAG, cityName + " : suggestRefreshWeather : 拒绝");
+            return false;
         }
-
-        return false;
     }
 
 
@@ -168,20 +176,9 @@ public class CityFragment extends Fragment {
     private void refreshView() {
         L.d(WeatherApplication.TAG, cityName + " : refreshView");
 
-        if (weather.isNA()) {
-            L.d(WeatherApplication.TAG, cityName + " : Weather is NA");
-            if (isHomePage() && !cityName.equals("N/A")) {
-                refreshWeather();
-            }
-        } else {
-            L.d(WeatherApplication.TAG, cityName + " : Weather Not NA");
-            L.d(WeatherApplication.TAG, cityName + " : " + weather.getCurrentTmp());
-            L.d(WeatherApplication.TAG, cityName + " : " + weather.getWeatherStatus());
-            L.d(WeatherApplication.TAG, cityName + " : " + weather.getAirQualityString());
-            tvCurrentTmp.setText(weather.getCurrentTmp());
-            tvWeatherStatus.setText(weather.getWeatherStatus());
-            tvAirQuality.setText(weather.getAirQualityString());
-        }
+        tvCurrentTmp.setText(weather.getCurrentTmp());
+        tvWeatherStatus.setText(weather.getWeatherStatus());
+        tvAirQuality.setText(weather.getAirQualityString());
 
         refreshBgColor();
     }
@@ -195,11 +192,14 @@ public class CityFragment extends Fragment {
             swipeRefresh.setRefreshing(true);
         }
 
-        if(!(mainActivity.getCurrentPagePosition() == getPosition())){
+        if (mainActivity.getCurrentPagePosition() != getPosition()) {
+            L.d(WeatherApplication.TAG, cityName + " : 拒绝刷新");
             return;
         }
 
-        L.d(WeatherApplication.TAG, "refreshWeather");
+        L.d(WeatherApplication.TAG, cityName + " : refreshWeather : 接受刷新");
+        L.d(WeatherApplication.TAG, cityName + " : Current position : " + mainActivity.getCurrentPagePosition());
+        L.d(WeatherApplication.TAG, cityName + " : position : " + getPosition());
 
         OkHttpClient okHttpClient = WeatherApplication.getInstance().getOkHttpClient();
         Request request = new Request.Builder()
@@ -212,7 +212,7 @@ public class CityFragment extends Fragment {
                 mainActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getContext(), "刷新失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "更新失败", Toast.LENGTH_SHORT).show();
                         swipeRefresh.setRefreshing(false);
                     }
                 });
@@ -224,10 +224,17 @@ public class CityFragment extends Fragment {
                 mainActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        weather.update(responseString);
                         swipeRefresh.setRefreshing(false);
-                        Toast.makeText(getContext(), "刷新成功", Toast.LENGTH_SHORT).show();
-                        refreshView();
+                        if (weather.update(responseString)) {
+                            Toast.makeText(mainActivity, "已更新", Toast.LENGTH_SHORT).show();
+                            refreshView();
+
+                            L.d(WeatherApplication.TAG, "刷新成功 : " + cityName);
+                        }else{
+                            Toast.makeText(mainActivity, "更新失败", Toast.LENGTH_SHORT).show();
+
+                            L.d(WeatherApplication.TAG, "刷新失败 : status 异常 : " + cityName);
+                        }
                     }
                 });
             }
@@ -283,12 +290,11 @@ public class CityFragment extends Fragment {
             ibHome.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mainActivity.setPagePosition(0);
+                    mainActivity.setCurrentPage(0);
                 }
             });
         }
         tvCityName.setText(cityName);
-
     }
 
     private void initViewListener() {
@@ -304,7 +310,53 @@ public class CityFragment extends Fragment {
         ibMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO 待完成
+                if (popupWindow == null) {
+                    popupView = LayoutInflater.from(getContext()).inflate(R.layout.popup_window, null, false);
+                    popupWindow = new PopupWindow(
+                            popupView,
+                            WeatherApplication.getInstance().getPx(128),
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    popupWindow.setTouchable(true);
+                    popupWindow.setFocusable(true);
+                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
+                    popupWindow.setOutsideTouchable(true);
+
+                    //添加城市
+                    popupView.findViewById(R.id.menuAdd).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //TODO 添加城市
+                            popupWindow.dismiss();
+                            Intent intent = new Intent(getContext(), AddCityActivity.class);
+                            intent.putExtra("weatherColorId", weather.getWeatherColorId());
+                            mainActivity.startActivityForResult(intent, 0);
+                        }
+                    });
+
+                    //删除城市
+                    popupView.findViewById(R.id.menuDelete).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            popupWindow.dismiss();
+                            mainActivity.deleteCity(getArguments().getInt(KEY_POSITION));
+
+                            if (!isHomePage()) {
+                                Snackbar.make(mainActivity.findViewById(R.id.vpContainer), "删除中...", Snackbar.LENGTH_LONG)
+                                        .setAction("取消", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                if (mainActivity.getCityManager().undoDelete()) {
+                                                    mainActivity.setCurrentPage(getPosition());
+                                                    Toast.makeText(WeatherApplication.getContext(), "取消成功", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }).show();
+                            }
+                        }
+                    });
+                }
+                popupView.setBackgroundResource(weather.getWeatherDarkColorId());
+                popupWindow.showAsDropDown(view);
             }
         });
 
@@ -317,24 +369,7 @@ public class CityFragment extends Fragment {
         });
     }
 
-    private void refreshBgColor(){
+    private void refreshBgColor() {
         contentView.setBackgroundResource(weather.getWeatherColorId());
     }
-
-    /*
-     TODO 菜单的删除城市功能（保留，请稍后加上）：
-     mainActivity.setPagePosition(Math.max(0, getPosition() - 1));
-     mainActivity.getCityManager().deleteCity(getArguments().getInt(KEY_POSITION));
-
-     if (!isHomePage()) {
-         Snackbar.make(mainActivity.findViewById(android.R.id.content), "删除中...", Snackbar.LENGTH_LONG)
-                 .setAction("取消", new View.OnClickListener() {
-                     @Override
-                     public void onClick(View view) {
-                         mainActivity.getCityManager().undoDelete();
-                         mainActivity.setPagePosition(getPosition());
-                     }
-                 }).show();
-     }
-     */
 }

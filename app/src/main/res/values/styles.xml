@@ -7,8 +7,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:textColor">@android:color/white</item>
+    </style>
 
+    <style name="popupMenuStyle" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/colorBlueDark</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

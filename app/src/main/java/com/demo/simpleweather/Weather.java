@@ -175,12 +175,16 @@ public class Weather implements Parcelable {
         return str;
     }
 
-    public void update(String json) {
+    public boolean update(String json) {
         L.d("App", "Update Weather");
         try {
             JSONObject jsonObject = new JSONObject(json);
             JSONArray heWeather5 = jsonObject.getJSONArray("HeWeather5");
             JSONObject weatherDetails = heWeather5.getJSONObject(0);
+
+            if(!weatherDetails.getString("status").equalsIgnoreCase("ok")){
+                return false;
+            }
 
             this.airQuality = decodeAirStatus(weatherDetails.getJSONObject("aqi").getJSONObject("city").getString("qlty"));
             L.d("App", "airQuality : " + airQuality);
@@ -194,7 +198,10 @@ public class Weather implements Parcelable {
         } catch (JSONException e) {
             L.e("App", "Update Error");
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     public int getWeatherColorId(){
@@ -213,6 +220,25 @@ public class Weather implements Parcelable {
                 return R.color.colorRed;
             default:
                 return R.color.colorBlue;
+        }
+    }
+
+    public int getWeatherDarkColorId(){
+        switch (airQuality) {
+            case Weather.AIR_GOOD:
+                return R.color.colorBlueDark;
+            case Weather.AIR_FINE:
+                return R.color.colorGreenDark;
+            case Weather.AIR_SLIGHT_POLLUTION:
+                return R.color.colorLimeDark;
+            case Weather.AIR_MODERATE_POLLUTION:
+                return R.color.colorOrangeDark;
+            case Weather.AIR_HEAVY_POLLUTION:
+                return R.color.colorDeepOrangeDark;
+            case Weather.AIR_SEVERE_POLLUTION:
+                return R.color.colorRedDark;
+            default:
+                return R.color.colorBlueDark;
         }
     }
 
