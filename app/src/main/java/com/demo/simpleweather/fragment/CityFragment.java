@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +57,15 @@ public class CityFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefresh;
 
-    private PopupWindow popupWindow;
-    private View popupView;
+    private PopupWindow pwMenu;
+    private View pwMenuView;
+
+    private PopupWindow pwForecast;
+    private View pwForecastView;
+    private TextView tvForecastWeather1;
+    private TextView tvForecastTmp1;
+    private TextView tvForecastWeather2;
+    private TextView tvForecastTmp2;
 
     //********************************Override**********************
 
@@ -188,22 +196,22 @@ public class CityFragment extends Fragment {
         ibMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (popupWindow == null) {
-                    popupView = LayoutInflater.from(getContext()).inflate(R.layout.popup_window, (ViewGroup) mPageView, false);
-                    popupWindow = new PopupWindow(
-                            popupView,
+                if (pwMenu == null) {
+                    pwMenuView = LayoutInflater.from(getContext()).inflate(R.layout.popup_window_menu, (ViewGroup) mPageView, false);
+                    pwMenu = new PopupWindow(
+                            pwMenuView,
                             SwApplication.getInstance().getPx(128),
                             ViewGroup.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setTouchable(true);
-                    popupWindow.setFocusable(true);
-                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
-                    popupWindow.setOutsideTouchable(true);
+                    pwMenu.setTouchable(true);
+                    pwMenu.setFocusable(true);
+                    pwMenu.setBackgroundDrawable(new BitmapDrawable());
+                    pwMenu.setOutsideTouchable(true);
 
                     //添加城市
-                    popupView.findViewById(R.id.menuAdd).setOnClickListener(new View.OnClickListener() {
+                    pwMenuView.findViewById(R.id.menuAdd).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            popupWindow.dismiss();
+                            pwMenu.dismiss();
                             Intent intent = new Intent(getContext(), AddCityActivity.class);
                             intent.putExtra("weatherColorId", mWeather.getWeatherColorId());
                             mActivity.startActivityForResult(intent, 0);
@@ -211,10 +219,10 @@ public class CityFragment extends Fragment {
                     });
 
                     //删除城市
-                    popupView.findViewById(R.id.menuDelete).setOnClickListener(new View.OnClickListener() {
+                    pwMenuView.findViewById(R.id.menuDelete).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            popupWindow.dismiss();
+                            pwMenu.dismiss();
                             mActivity.deleteCity(mCity);
 
                             if (!isHome()) {
@@ -231,8 +239,8 @@ public class CityFragment extends Fragment {
                         }
                     });
                 }
-                popupView.setBackgroundResource(mWeather.getWeatherDarkColorId());
-                popupWindow.showAsDropDown(view);
+                pwMenuView.setBackgroundResource(mWeather.getWeatherDarkColorId());
+                pwMenu.showAsDropDown(view);
             }
         });
 
@@ -240,7 +248,30 @@ public class CityFragment extends Fragment {
         ibArrowUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO 待完成
+                if (pwForecast == null) {
+                    pwForecastView = LayoutInflater.from(getContext())
+                            .inflate(R.layout.popup_window_forecast, (ViewGroup) mPageView, false);
+
+                    pwForecast = new PopupWindow(pwForecastView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    pwForecast.setTouchable(true);
+                    pwForecast.setFocusable(true);
+                    pwForecast.setBackgroundDrawable(new BitmapDrawable());
+                    pwForecast.setOutsideTouchable(true);
+                    pwForecast.setAnimationStyle(R.style.popupAnim);
+
+                    tvForecastWeather1 = (TextView) pwForecastView.findViewById(R.id.tvForecastWeather1);
+                    tvForecastTmp1 = (TextView) pwForecastView.findViewById(R.id.tvForecastTmp1);
+                    tvForecastWeather2 = (TextView) pwForecastView.findViewById(R.id.tvForecastWeather2);
+                    tvForecastTmp2 = (TextView) pwForecastView.findViewById(R.id.tvForecastTmp2);
+                }
+
+                tvForecastWeather1.setText(mWeather.getForecastWeather1());
+                tvForecastTmp1.setText(mWeather.getForecastTmp1());
+                tvForecastWeather2.setText(mWeather.getForecastWeather2());
+                tvForecastTmp2.setText(mWeather.getForecastTmp2());
+
+                pwForecastView.setBackgroundResource(mWeather.getWeatherDarkColorId());
+                pwForecast.showAtLocation(ibArrowUp, Gravity.BOTTOM, 0, 0);
             }
         });
     }

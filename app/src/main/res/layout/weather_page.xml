@@ -87,18 +87,6 @@
             android:textSize="112sp"
             tools:ignore="HardcodedText,RtlHardcoded"/>
 
-        <!--<TextView-->
-        <!--android:id="@+id/tvMinTemp"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignBaseline="@id/tvMaxTemp"-->
-        <!--android:layout_alignLeft="@id/tvDegree"-->
-        <!--android:layout_marginTop="120sp"-->
-        <!--android:padding="8dp"-->
-        <!--android:text="@string/default_message"-->
-        <!--android:textSize="24sp"-->
-        <!--tools:ignore="RtlHardcoded"/>-->
-
         <TextView
             android:textColor="@android:color/white"
             android:id="@+id/tvWeatherStatus"

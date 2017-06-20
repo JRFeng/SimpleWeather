@@ -39,19 +39,6 @@ public class Weather implements Parcelable {
         forecastTmp2 = "N/A";
     }
 
-//    public Weather(String weatherStatus, String currentTmp, String minTemp, int airQuality,
-//                   String forecastWeather1, String forecastTmp1, String forecastWeather2, String forecastTmp2) {
-//        this.weatherStatus = weatherStatus;
-//        this.currentTmp = currentTmp;
-//        this.minTemp = minTemp + "\u00B0";
-//        this.airQuality = airQuality;
-//
-//        this.forecastWeather1 = forecastWeather1;
-//        this.forecastTmp1 = forecastTmp1;
-//        this.forecastWeather2 = forecastWeather2;
-//        this.forecastTmp2 = forecastTmp2;
-//    }
-
     private Weather(Parcel in) {
         weatherStatus = in.readString();
         currentTmp = in.readString();
@@ -183,10 +170,11 @@ public class Weather implements Parcelable {
             JSONArray heWeather5 = jsonObject.getJSONArray("HeWeather5");
             JSONObject weatherDetails = heWeather5.getJSONObject(0);
 
-            if(!weatherDetails.getString("status").equalsIgnoreCase("ok")){
+            if (!weatherDetails.getString("status").equalsIgnoreCase("ok")) {
                 return false;
             }
 
+            //Current
             this.airQuality = decodeAirStatus(weatherDetails.getJSONObject("aqi").getJSONObject("city").getString("qlty"));
             L.d("App", "airQuality : " + airQuality);
 
@@ -195,6 +183,21 @@ public class Weather implements Parcelable {
             L.d("App", "weatherStatus : " + weatherStatus);
 
             this.currentTmp = now.getString("tmp");
+
+            //Forecast
+            JSONArray forecast = weatherDetails.getJSONArray("daily_forecast");
+
+            //明天预报
+            JSONObject forecast1 = forecast.getJSONObject(1);
+            forecastWeather1 = forecast1.getJSONObject("cond").getString("txt_d");
+            JSONObject tmp1 = forecast1.getJSONObject("tmp");
+            forecastTmp1 = tmp1.getString("min") + "\u00B0 - " + tmp1.getString("max") + "\u00B0";
+
+            //后天预报
+            JSONObject forecast2 = forecast.getJSONObject(2);
+            forecastWeather2 = forecast2.getJSONObject("cond").getString("txt_d");
+            JSONObject tmp2 = forecast2.getJSONObject("tmp");
+            forecastTmp2 = tmp2.getString("min") + "\u00B0 - " + tmp2.getString("max") + "\u00B0";
 
         } catch (JSONException e) {
             L.e("App", "Update Error");
@@ -205,7 +208,7 @@ public class Weather implements Parcelable {
         return true;
     }
 
-    public int getWeatherColorId(){
+    public int getWeatherColorId() {
         switch (airQuality) {
             case Weather.AIR_GOOD:
                 return R.color.colorBlue;
@@ -224,7 +227,7 @@ public class Weather implements Parcelable {
         }
     }
 
-    public int getWeatherDarkColorId(){
+    public int getWeatherDarkColorId() {
         switch (airQuality) {
             case Weather.AIR_GOOD:
                 return R.color.colorBlueDark;
@@ -243,7 +246,7 @@ public class Weather implements Parcelable {
         }
     }
 
-    private int decodeAirStatus(String airStatus){
+    private int decodeAirStatus(String airStatus) {
         int statusCode = AIR_UNKNOWN;
         switch (airStatus) {
             case "优":

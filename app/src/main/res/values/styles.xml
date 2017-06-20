@@ -14,4 +14,9 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="popupAnim">
+        <item name="android:windowEnterAnimation">@anim/popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/popup_exit</item>
+    </style>
+
 </resources>

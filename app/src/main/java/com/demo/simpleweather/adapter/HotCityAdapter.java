@@ -50,7 +50,7 @@ public class HotCityAdapter extends DelegateAdapter.Adapter<HotCityAdapter.ViewH
         holder.tvHotCityName.setTextColor(color);
 
         GradientDrawable gradientDrawable = (GradientDrawable) holder.tvHotCityName.getBackground();
-        gradientDrawable.setStroke(SwApplication.getInstance().getPx(1), color);
+        gradientDrawable.setStroke(SwApplication.getInstance().getPx(2), color);
 
         holder.tvHotCityName.setOnClickListener(new View.OnClickListener() {
             @Override
