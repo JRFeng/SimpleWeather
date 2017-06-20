@@ -1,8 +1,9 @@
-package com.demo.simpleweather;
+package com.demo.simpleweather.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.demo.simpleweather.R;
 import com.demo.simpleweather.utils.L;
 
 import org.json.JSONArray;

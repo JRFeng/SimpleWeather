@@ -10,8 +10,8 @@ import android.view.WindowManager;
 import okhttp3.OkHttpClient;
 
 
-public class WeatherApplication extends Application {
-    private static WeatherApplication weatherApplication;
+public class SwApplication extends Application {
+    private static SwApplication swApplication;
     private OkHttpClient okHttpClient;
     private int dpi;
 
@@ -22,7 +22,7 @@ public class WeatherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        weatherApplication = this;
+        swApplication = this;
         okHttpClient = new OkHttpClient();
 
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
@@ -33,12 +33,12 @@ public class WeatherApplication extends Application {
         dpi = displayMetrics.densityDpi;
     }
 
-    public static WeatherApplication getInstance() {
-        return weatherApplication;
+    public static SwApplication getInstance() {
+        return swApplication;
     }
 
     public static Context getContext() {
-        return weatherApplication;
+        return swApplication;
     }
 
     public OkHttpClient getOkHttpClient() {

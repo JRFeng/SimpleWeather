@@ -1,6 +1,5 @@
-package com.demo.simpleweather;
+package com.demo.simpleweather.activity;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +10,8 @@ import android.view.MenuItem;
 
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
+import com.demo.simpleweather.R;
+import com.demo.simpleweather.SwApplication;
 import com.demo.simpleweather.adapter.HotCityAdapter;
 
 import java.util.LinkedList;
@@ -52,7 +53,7 @@ public class AddCityActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_city);
 
         //保存颜色值
-        WeatherApplication.setData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
+        SwApplication.setData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
 
         //findView
         toolbar = (Toolbar) findViewById(R.id.toolbar);

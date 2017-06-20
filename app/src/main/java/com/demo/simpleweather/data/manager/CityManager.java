@@ -2,14 +2,13 @@ package com.demo.simpleweather.data.manager;
 
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 
 import com.demo.simpleweather.SwApplication;
 import com.demo.simpleweather.adapter.CityPagerAdapter;
 import com.demo.simpleweather.data.City;
-import com.demo.simpleweather.fragment.CityFragment_raw;
+import com.demo.simpleweather.fragment.CityFragment;
 import com.demo.simpleweather.utils.L;
 
 import java.io.IOException;
@@ -21,8 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CityManager {
+    private static CityManager mInstance;
+
     private List<City> mCities;
-    private List<CityFragment_raw> mCityFragmentRaws;
+    private List<CityFragment> mCityFragments;
 
     private PagerAdapter mPagerAdapter;
 
@@ -34,8 +35,7 @@ public class CityManager {
     private City tempCity;
     private int tempPosition;
 
-    //TODO 考虑是否可以将CityManager设计成单例模式
-    public CityManager() {
+    private CityManager() {
         restoreCities();
         initFragments();
     }
@@ -50,6 +50,13 @@ public class CityManager {
 
 
     //******************public**************
+
+    public synchronized static CityManager getInstance() {
+        if (mInstance == null) {
+            mInstance = new CityManager();
+        }
+        return mInstance;
+    }
 
     /**
      * 保存数据到本地
@@ -83,7 +90,7 @@ public class CityManager {
      * @return PagerAdapter
      */
     public PagerAdapter getPagerAdapter(FragmentManager fm) {
-        mPagerAdapter = new CityPagerAdapter(fm, mCityFragmentRaws);
+        mPagerAdapter = new CityPagerAdapter(fm, mCityFragments);
         return mPagerAdapter;
     }
 
@@ -94,22 +101,38 @@ public class CityManager {
      * @return 添加成功则返回true，否则返回false
      */
     public boolean addCity(City city) {
-        if (city.isLocationCity()) {
+        if (city.isLocationCity()) {  //判断是否是定位城市
             //调试
             L.d(SwApplication.TAG, "添加定位城市 : " + city.getName());
 
+            if (contains(city)) {
+                L.d(SwApplication.TAG, "定位城市 : " + city.getName() + " : 已存在");
+                if (getPosition(city) == 0) {  //判断是否是HomePage
+                    L.d(SwApplication.TAG, "定位城市已存在 : " + city.getName() + " : 是HomePage，不添加");
+                    return false;
+                } else {
+                    deleteCity(city);    //如果不是HomePage，那么删除重新添加
+                    L.d(SwApplication.TAG, "定位城市已存在 : " + city.getName() + " : 不是HomePage，删除后重新添加");
+                }
+            }
+
+            L.d(SwApplication.TAG, "定位城市 : " + city.getName() + " : 不存在");
+
             //将原来的定位城市的设为false
-            City nextCity = (City) mCityFragmentRaws.get(0).getArguments().getSerializable(CityFragment_raw.KEY_CITY);
-            if (nextCity != null) {
+            City nextCity = mCityFragments.get(0).getCity();
+            if (nextCity.getName().equals("N/A")) {
+                deleteCity(nextCity);
+            } else {
                 nextCity.setIsLocationCity(false);
-                mCityFragmentRaws.get(0).getArguments().putSerializable(CityFragment_raw.KEY_CITY, nextCity);
             }
 
             return addCity(0, city);
         } else {
             //调试
             L.d(SwApplication.TAG, "添加普通城市 : " + city.getName());
-
+            if (contains(new City("N/A"))) {
+                deleteCity(new City("N/A"));
+            }
             return addCity(mCities.size(), city);
         }
     }
@@ -120,35 +143,41 @@ public class CityManager {
      * @param index 要添加到的位置
      * @param city  要添加的城市
      */
-    public boolean addCity(int index, City city) {
+    private boolean addCity(int index, City city) {
         if (!contains(city) && !isFull()) {
             //调试
             L.d(SwApplication.TAG, "添加城市 : " + city.getName());
 
             mCities.add(index, city);
-            CityFragment_raw page = new CityFragment_raw();
-            Bundle args = new Bundle();
-            args.putSerializable(CityFragment_raw.KEY_CITY, city);
-            args.putInt(CityFragment_raw.KEY_POSITION, index);
-            page.setArguments(args);
-            mCityFragmentRaws.add(index, page);
+            CityFragment page = new CityFragment();
+            page.setCity(city);
+            mCityFragments.add(index, page);
 
             notifyDataChanged();
+
+            //调试
+            L.d(SwApplication.TAG, "添加城市成功 : " + city.getName());
             return true;
         } else {
-            //调试
-            L.d(SwApplication.TAG, "添加城市失败 : " + city.getName()
-                    + " 该城市已存在，或者容量已满");
+            if (isFull()) {
+                //调试
+                L.d(SwApplication.TAG, "添加城市失败 : " + city.getName() + " : 容量已满");
+            }
+            if (contains(city)) {
+                //调试
+                L.d(SwApplication.TAG, "添加城市失败 : " + city.getName() + " : 已经存在");
+            }
             return false;
         }
     }
 
     /**
-     * 删除指定位置的城市
+     * 删除指定的城市
      *
-     * @param position 要删除的城市的位置
+     * @param city 要删除的城市
      */
-    public boolean deleteCity(int position) {
+    public boolean deleteCity(City city) {
+        int position = getPosition(city);
         if (position > 0 || mCities.get(position).getName().equals("N/A")) {
             //调试
             L.d(SwApplication.TAG, "删除城市 : " + mCities.get(position).getName());
@@ -156,7 +185,7 @@ public class CityManager {
             tempCity = mCities.remove(position);    //缓存City
             tempPosition = position;                //缓存position
 
-            mCityFragmentRaws.remove(position);
+            mCityFragments.remove(position);
             notifyDataChanged();
             return true;
         }
@@ -186,6 +215,29 @@ public class CityManager {
         return mCities.size() == Capacity;
     }
 
+    public int getPosition(City city) {
+        for (int i = 0; i < mCities.size(); i++) {
+            if (city.getName().equals(mCities.get(i).getName())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //判断某个城市是否已经存在
+    public boolean contains(City city) {
+        for (City i : mCities) {
+            if (i.getName().equals(city.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void suggestRefreshWeather(int position) {
+        mCityFragments.get(position).suggestRefreshWeather();
+    }
+
     //******************private*************
 
     //从本地恢复数据
@@ -209,38 +261,21 @@ public class CityManager {
 
     //初始化所有的Fragment
     private void initFragments() {
-        mCityFragmentRaws = new LinkedList<>();
+        mCityFragments = new LinkedList<>();
         for (int i = 0; i < mCities.size(); i++) {
-            CityFragment_raw page = new CityFragment_raw();
-            Bundle args = new Bundle();
-            args.putSerializable(CityFragment_raw.KEY_CITY, mCities.get(i));
-            args.putInt(CityFragment_raw.KEY_POSITION, i);
-            page.setArguments(args);
-            mCityFragmentRaws.add(page);
+            CityFragment page = new CityFragment();
+            page.setCity(mCities.get(i));
+            mCityFragments.add(page);
         }
     }
 
     //通知数据发生改变
     private void notifyDataChanged() {
         //调试
-        L.d(SwApplication.TAG, "更新所有页面位置信息");
-        for (int i = 0; i < mCityFragmentRaws.size(); i++) {
-            mCityFragmentRaws.get(i)
-                    .getArguments()
-                    .putInt(CityFragment_raw.KEY_POSITION, i); //更新位置信息
-        }
+        L.d(SwApplication.TAG, "notifyDataSetChanged");
+
         if (mPagerAdapter != null) {
             mPagerAdapter.notifyDataSetChanged();
         }
-    }
-
-    //判断某个城市是否已经存在
-    private boolean contains(City city) {
-        for (City i : mCities) {
-            if (i.getName().equals(city.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

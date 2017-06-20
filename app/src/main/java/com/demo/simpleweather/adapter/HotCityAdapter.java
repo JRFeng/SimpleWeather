@@ -1,7 +1,6 @@
 package com.demo.simpleweather.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
@@ -15,9 +14,9 @@ import android.widget.TextView;
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.LayoutHelper;
 import com.alibaba.android.vlayout.layout.GridLayoutHelper;
-import com.demo.simpleweather.AddCityActivity;
+import com.demo.simpleweather.activity.AddCityActivity;
 import com.demo.simpleweather.R;
-import com.demo.simpleweather.WeatherApplication;
+import com.demo.simpleweather.SwApplication;
 
 
 public class HotCityAdapter extends DelegateAdapter.Adapter<HotCityAdapter.ViewHolder> {
@@ -28,7 +27,7 @@ public class HotCityAdapter extends DelegateAdapter.Adapter<HotCityAdapter.ViewH
     public HotCityAdapter(Activity activity, String[] hotCities) {
         mActivity = activity;
         mHotCities = hotCities;
-        color = mActivity.getResources().getColor(WeatherApplication.getData());
+        color = mActivity.getResources().getColor(SwApplication.getData());
     }
 
     @Override
@@ -51,7 +50,7 @@ public class HotCityAdapter extends DelegateAdapter.Adapter<HotCityAdapter.ViewH
         holder.tvHotCityName.setTextColor(color);
 
         GradientDrawable gradientDrawable = (GradientDrawable) holder.tvHotCityName.getBackground();
-        gradientDrawable.setStroke(WeatherApplication.getInstance().getPx(1), color);
+        gradientDrawable.setStroke(SwApplication.getInstance().getPx(1), color);
 
         holder.tvHotCityName.setOnClickListener(new View.OnClickListener() {
             @Override
