@@ -20,33 +20,7 @@ import java.util.LinkedList;
 public class AddCityActivity extends AppCompatActivity {
     public static final String KEY_RESULT = "new_city";
 
-    private Toolbar toolbar;
     private RecyclerView rvCityList;
-
-//    private String[] hotCities;
-
-//    private String[] keyA;
-//    private String[] keyB;
-//    private String[] keyC;
-//    private String[] keyD;
-//    private String[] keyE;
-//    private String[] keyF;
-//    private String[] keyG;
-//    private String[] keyH;
-//    private String[] keyJ;
-//    private String[] keyK;
-//    private String[] keyL;
-//    private String[] keyM;
-//    private String[] keyN;
-//    private String[] keyP;
-//    private String[] keyQ;
-//    private String[] keyR;
-//    private String[] keyS;
-//    private String[] keyT;
-//    private String[] keyW;
-//    private String[] keyX;
-//    private String[] keyY;
-//    private String[] keyZ;
 
 
     @Override
@@ -58,7 +32,7 @@ public class AddCityActivity extends AppCompatActivity {
         SwApplication.setSharedData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
 
         //findView
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         rvCityList = (RecyclerView) findViewById(R.id.rvCityList);
 
 

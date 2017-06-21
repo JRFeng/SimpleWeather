@@ -7,7 +7,8 @@
     android:background="@color/colorBlueDark"
     android:orientation="horizontal"
     android:paddingBottom="16dp"
-    android:paddingTop="16dp">
+    android:paddingTop="16dp"
+    tools:ignore="Overdraw">
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -22,8 +23,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="明天"
+            android:maxEms="2"
             android:textColor="@android:color/white"
-            android:textSize="34sp"/>
+            android:textSize="34sp"
+            tools:ignore="HardcodedText"/>
 
         <TextView
             android:id="@+id/tvForecastWeather1"
@@ -32,7 +35,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/day1"
             android:text="@string/default_message"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            tools:ignore="RelativeOverlap"/>
 
         <TextView
             android:id="@+id/tvForecastTmp1"
@@ -41,7 +45,8 @@
             android:layout_alignBottom="@id/day1"
             android:layout_alignParentRight="true"
             android:text="@string/default_message"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            tools:ignore="RelativeOverlap"/>
 
     </RelativeLayout>
 
@@ -65,8 +70,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="后天"
+            android:maxEms="2"
             android:textColor="@android:color/white"
-            android:textSize="34sp"/>
+            android:textSize="34sp"
+            tools:ignore="HardcodedText"/>
 
         <TextView
             android:id="@+id/tvForecastWeather2"
@@ -75,7 +82,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/day2"
             android:text="@string/default_message"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            tools:ignore="RelativeOverlap"/>
 
         <TextView
             android:id="@+id/tvForecastTmp2"
@@ -84,7 +92,8 @@
             android:layout_alignBottom="@id/day2"
             android:layout_alignParentRight="true"
             android:text="@string/default_message"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            tools:ignore="RelativeOverlap"/>
 
     </RelativeLayout>
 

@@ -92,8 +92,8 @@ public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.Vie
 
         ViewHolder(View itemView) {
             super(itemView);
-
-            tvHotCityName = (TextView) itemView.findViewById(R.id.tvHotCityName);
+            //注释掉这些类型转换是因为Lint检测出这些类型转换是多于的，如果后续有需求，可以取消注释。
+            tvHotCityName = /*(TextView)*/ itemView.findViewById(R.id.tvHotCityName);
         }
     }
 }

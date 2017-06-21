@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.LayoutHelper;
-import com.alibaba.android.vlayout.layout.SingleLayoutHelper;
 
 import com.alibaba.android.vlayout.layout.StickyLayoutHelper;
 import com.demo.simpleweather.R;
@@ -50,10 +49,10 @@ public class TitleAdapter extends DelegateAdapter.Adapter<TitleAdapter.ViewHolde
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-
-            title = (TextView) itemView.findViewById(R.id.tvTitle);
+            //注释掉这些类型转换是因为Lint检测出这些类型转换是多于的，如果后续有需求，可以取消注释。
+            title = /*(TextView)*/ itemView.findViewById(R.id.tvTitle);
         }
     }
 }

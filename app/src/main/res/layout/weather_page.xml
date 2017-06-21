@@ -41,7 +41,8 @@
                 android:maxLines="1"
                 android:text="@string/default_message"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                tools:ignore="RelativeOverlap"/>
 
             <ImageView
                 android:id="@+id/ivLocationImage"

@@ -12,6 +12,7 @@
         android:background="@android:color/white"
         android:paddingBottom="16dp"
         android:paddingLeft="34dp"
+        android:paddingRight="34dp"
         android:paddingTop="16dp"
         android:text="@string/default_message"
         android:textColor="@color/colorGray"

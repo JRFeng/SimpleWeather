@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -81,19 +80,21 @@ public class CityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mPageView = inflater.inflate(R.layout.weather_page, container, false);
 
-        tvCityName = (TextView) mPageView.findViewById(R.id.tvCityName);
 
-        tvCurrentTmp = (TextView) mPageView.findViewById(R.id.tvCurrentTmp);
-        tvWeatherStatus = (TextView) mPageView.findViewById(R.id.tvWeatherStatus);
-        tvAirQuality = (TextView) mPageView.findViewById(R.id.tvAirQuality);
+        //注释掉这些类型转换是因为Lint检测出这些类型转换是多于的，如果后续有需求，可以取消注释。
+        tvCityName = /*(TextView)*/ mPageView.findViewById(R.id.tvCityName);
 
-        ivLocationImage = (ImageView) mPageView.findViewById(R.id.ivLocationImage);
+        tvCurrentTmp = /*(TextView)*/ mPageView.findViewById(R.id.tvCurrentTmp);
+        tvWeatherStatus = /*(TextView)*/ mPageView.findViewById(R.id.tvWeatherStatus);
+        tvAirQuality = /*(TextView)*/ mPageView.findViewById(R.id.tvAirQuality);
 
-        ibHome = (ImageButton) mPageView.findViewById(R.id.ibHome);
-        ibMenu = (ImageButton) mPageView.findViewById(R.id.ibMenu);
-        ibArrowUp = (ImageButton) mPageView.findViewById(R.id.ibArrowUp);
+        ivLocationImage = /*(ImageView)*/ mPageView.findViewById(R.id.ivLocationImage);
 
-        swipeRefresh = (SwipeRefreshLayout) mPageView.findViewById(R.id.swipeRefresh);
+        ibHome = /*(ImageButton)*/ mPageView.findViewById(R.id.ibHome);
+        ibMenu = /*(ImageButton)*/ mPageView.findViewById(R.id.ibMenu);
+        ibArrowUp = /*(ImageButton)*/ mPageView.findViewById(R.id.ibArrowUp);
+
+        swipeRefresh = /*(SwipeRefreshLayout)*/ mPageView.findViewById(R.id.swipeRefresh);
 
         addViewListener();
         return mPageView;
@@ -269,10 +270,10 @@ public class CityFragment extends Fragment {
                     pwForecast.setOutsideTouchable(true);
                     pwForecast.setAnimationStyle(R.style.popupAnim);
 
-                    tvForecastWeather1 = (TextView) pwForecastView.findViewById(R.id.tvForecastWeather1);
-                    tvForecastTmp1 = (TextView) pwForecastView.findViewById(R.id.tvForecastTmp1);
-                    tvForecastWeather2 = (TextView) pwForecastView.findViewById(R.id.tvForecastWeather2);
-                    tvForecastTmp2 = (TextView) pwForecastView.findViewById(R.id.tvForecastTmp2);
+                    tvForecastWeather1 = /*(TextView)*/ pwForecastView.findViewById(R.id.tvForecastWeather1);
+                    tvForecastTmp1 = /*(TextView)*/ pwForecastView.findViewById(R.id.tvForecastTmp1);
+                    tvForecastWeather2 = /*(TextView)*/ pwForecastView.findViewById(R.id.tvForecastWeather2);
+                    tvForecastTmp2 = /*(TextView)*/ pwForecastView.findViewById(R.id.tvForecastTmp2);
                 }
 
                 tvForecastWeather1.setText(mWeather.getForecastWeather1());
