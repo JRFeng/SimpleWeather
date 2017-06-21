@@ -16,6 +16,7 @@ public class SwApplication extends Application {
     private int dpi;
 
     private static int savedData;
+    private static int shardColor;
 
     public static final String TAG = "SimpleWeather";
 
@@ -49,11 +50,11 @@ public class SwApplication extends Application {
         return dp * dpi / 160;
     }
 
-    public static void setData(int data) {
+    public static void setSharedData(int data) {
         savedData = data;
     }
 
-    public static int getData() {
+    public static int getSharedData() {
         return savedData;
     }
 }

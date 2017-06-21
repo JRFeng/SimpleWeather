@@ -2,10 +2,16 @@ package com.demo.simpleweather.activity;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -19,11 +25,15 @@ import com.demo.simpleweather.SwApplication;
 import com.demo.simpleweather.utils.L;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CityManager.OnDataChangedListener {
     private Context mContext;
     private CityManager mCityManager;
     private int mCurrentPosition;
     private ViewPager vpContainer;
+    private TextView tvIndicator;
+
+    public static final int DATA_CHANGED = 0;
+    public static final int WEATHER_UPDATED = 1;
 
     //********************************Override*******************************
 
@@ -35,12 +45,16 @@ public class MainActivity extends AppCompatActivity {
         L.d("App", "MainActivity : onCreate");
 
         mContext = this;
+
         vpContainer = (ViewPager) findViewById(R.id.vpContainer);
         mCityManager = CityManager.getInstance();
         vpContainer.setAdapter(mCityManager.getPagerAdapter(getSupportFragmentManager()));
 
+        tvIndicator = (TextView) findViewById(R.id.tvIndicator);
+
         addViewListener();
         location();
+        updateIndicator();
     }
 
     @Override
@@ -90,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         return mCityManager.getPosition(city);
     }
 
-
     public void deleteCity(final City city) {
         if (mCityManager.getPosition(city) == 0) {
             Toast.makeText(mContext, "主页面无法删除", Toast.LENGTH_SHORT).show();
@@ -111,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onPageScrollStateChanged(int state) {
                     if (state == ViewPager.SCROLL_STATE_IDLE) {
                         mCityManager.deleteCity(city);
+                        updateIndicator();
                         vpContainer.removeOnPageChangeListener(this);
                     }
                 }
@@ -120,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void undoDelete() {
         mCityManager.undoDelete();
+    }
+
+    /**
+     * 这个方法的主要的作用是动态修改指示器 tvIndicator 文
+     * 本的颜色，这个功能对 CityFragment.suggestRefreshWeather() 方
+     * 法和 CityFragment.refreshWeather() 方法的依赖度很高，下次重构时请注意！
+     */
+    public void setIndicatorColorRes(int colorId) {
+        tvIndicator.setTextColor(getResources().getColor(colorId));
     }
 
     //*****************************private******************************
@@ -166,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 mCurrentPosition = position;
                 mCityManager.suggestRefreshWeather(position);
+
+                updateIndicator();
             }
 
             @Override
@@ -173,5 +198,36 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        //指示器监听器
+        tvIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext)
+                        .setItems(mCityManager.getCityNames(), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                setCurrentPage(i, true);
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+            }
+        });
+    }
+
+    private void updateIndicator() {
+        int size = mCityManager.getSize();
+        if (size > 1) {
+            tvIndicator.setVisibility(View.VISIBLE);
+            tvIndicator.setText((mCurrentPosition + 1) + "/" + size);
+        } else {
+            tvIndicator.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onDataChanged() {
+        updateIndicator();
     }
 }

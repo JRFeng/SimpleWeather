@@ -5,6 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorLight">#6FFF</color>
+    <color name="colorGray">#8000</color>
+    <color name="colorGrayLight">#DDD</color>
 
     <!--空气质量：优-->
     <color name="colorBlue">#2196F3</color>

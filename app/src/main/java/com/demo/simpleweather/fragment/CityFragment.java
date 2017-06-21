@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -132,6 +133,15 @@ public class CityFragment extends Fragment {
     }
 
     public boolean suggestRefreshWeather() {
+
+        /*
+         * 当前if语句和 MainActivity.setIndicatorColorRes() 方
+         * 法的耦合度很高，下次重构时请注意！
+         */
+        if(mActivity.getCurrentPosition() == mActivity.getPosition(mCity)){
+            mActivity.setIndicatorColorRes(mWeather.getWeatherDarkColorId());
+        }
+
         long elapseMinute = getElapseMinute();
 
         L.d(SwApplication.TAG, "Elapse Minute : " + elapseMinute);
@@ -271,7 +281,7 @@ public class CityFragment extends Fragment {
                 tvForecastTmp2.setText(mWeather.getForecastTmp2());
 
                 pwForecastView.setBackgroundResource(mWeather.getWeatherDarkColorId());
-                pwForecast.showAtLocation(ibArrowUp, Gravity.BOTTOM, 0, 0);
+                pwForecast.showAtLocation(mPageView, Gravity.BOTTOM, 0, 0);
             }
         });
     }
@@ -374,6 +384,14 @@ public class CityFragment extends Fragment {
                             refreshView();
                             mLastRefreshTime = System.currentTimeMillis();
 
+                            /*
+                             * 当前if语句和 MainActivity.setIndicatorColorRes() 方
+                             * 法的耦合度很高，下次重构时请注意！
+                             */
+                            if(mActivity.getCurrentPosition() == mActivity.getPosition(mCity)){
+                                mActivity.setIndicatorColorRes(mWeather.getWeatherDarkColorId());
+                            }
+
                             //调试
                             L.d(SwApplication.TAG, "刷新成功 : " + mCity.getName());
                             L.d(SwApplication.TAG, "Elapse Minute : " + getElapseMinute());
@@ -397,6 +415,8 @@ public class CityFragment extends Fragment {
         tvCurrentTmp.setText(mWeather.getCurrentTmp());
         tvWeatherStatus.setText(mWeather.getWeatherStatus());
         tvAirQuality.setText(mWeather.getAirQualityString());
+
+        swipeRefresh.setColorSchemeResources(mWeather.getWeatherDarkColorId());
 
         refreshBgColor();
     }

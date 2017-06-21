@@ -19,28 +19,36 @@ import com.demo.simpleweather.R;
 import com.demo.simpleweather.SwApplication;
 
 
-public class HotCityAdapter extends DelegateAdapter.Adapter<HotCityAdapter.ViewHolder> {
+public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.ViewHolder> {
     private Activity mActivity;
     private String[] mHotCities;
     private int color;
 
-    public HotCityAdapter(Activity activity, String[] hotCities) {
+    public CityNameAdapter(Activity activity, String[] hotCities) {
         mActivity = activity;
         mHotCities = hotCities;
-        color = mActivity.getResources().getColor(SwApplication.getData());
+        color = mActivity.getResources().getColor(SwApplication.getSharedData());
     }
 
     @Override
     public LayoutHelper onCreateLayoutHelper() {
         GridLayoutHelper layoutHelper = new GridLayoutHelper(3);
-        layoutHelper.setAutoExpand(true);
+        layoutHelper.setPadding(
+                SwApplication.getInstance().getPx(32),
+                SwApplication.getInstance().getPx(8),
+                SwApplication.getInstance().getPx(16),
+                SwApplication.getInstance().getPx(8));
+//        layoutHelper.setHGap(SwApplication.getInstance().getPx(32));
+
+        layoutHelper.setBgColor(mActivity.getResources().getColor(android.R.color.white));
+        layoutHelper.setAutoExpand(false);
 
         return layoutHelper;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mActivity).inflate(R.layout.hot_city_item, parent, false);
+        View view = LayoutInflater.from(mActivity).inflate(R.layout.city_name_adpter_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,7 +58,7 @@ public class HotCityAdapter extends DelegateAdapter.Adapter<HotCityAdapter.ViewH
         holder.tvHotCityName.setTextColor(color);
 
         GradientDrawable gradientDrawable = (GradientDrawable) holder.tvHotCityName.getBackground();
-        gradientDrawable.setStroke(SwApplication.getInstance().getPx(2), color);
+        gradientDrawable.setStroke(SwApplication.getInstance().getPx(1), color);
 
         holder.tvHotCityName.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -3,12 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorAccent">
+
+    <!--沉浸式状态栏设置无效-->
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vpContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"/>
 
     <TextView
         android:id="@+id/tvIndicator"
@@ -27,3 +32,4 @@
         android:visibility="gone"/>
 
 </RelativeLayout>
+

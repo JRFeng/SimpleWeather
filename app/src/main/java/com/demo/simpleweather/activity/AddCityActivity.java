@@ -12,40 +12,42 @@ import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
 import com.demo.simpleweather.R;
 import com.demo.simpleweather.SwApplication;
-import com.demo.simpleweather.adapter.HotCityAdapter;
+import com.demo.simpleweather.adapter.CityNameAdapter;
+import com.demo.simpleweather.adapter.TitleAdapter;
 
 import java.util.LinkedList;
 
 public class AddCityActivity extends AppCompatActivity {
-    public static final String KEY_RESULT ="new_city";
+    public static final String KEY_RESULT = "new_city";
 
     private Toolbar toolbar;
     private RecyclerView rvCityList;
 
-    private String[] hotCities;
+//    private String[] hotCities;
 
-    private String[] keyA;
-    private String[] keyB;
-    private String[] keyC;
-    private String[] keyD;
-    private String[] keyE;
-    private String[] keyF;
-    private String[] keyG;
-    private String[] keyH;
-    private String[] keyJ;
-    private String[] keyK;
-    private String[] keyL;
-    private String[] keyM;
-    private String[] keyN;
-    private String[] keyP;
-    private String[] keyQ;
-    private String[] keyR;
-    private String[] keyS;
-    private String[] keyT;
-    private String[] keyW;
-    private String[] keyX;
-    private String[] keyY;
-    private String[] keyZ;
+//    private String[] keyA;
+//    private String[] keyB;
+//    private String[] keyC;
+//    private String[] keyD;
+//    private String[] keyE;
+//    private String[] keyF;
+//    private String[] keyG;
+//    private String[] keyH;
+//    private String[] keyJ;
+//    private String[] keyK;
+//    private String[] keyL;
+//    private String[] keyM;
+//    private String[] keyN;
+//    private String[] keyP;
+//    private String[] keyQ;
+//    private String[] keyR;
+//    private String[] keyS;
+//    private String[] keyT;
+//    private String[] keyW;
+//    private String[] keyX;
+//    private String[] keyY;
+//    private String[] keyZ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,7 @@ public class AddCityActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_city);
 
         //保存颜色值
-        SwApplication.setData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
+        SwApplication.setSharedData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
 
         //findView
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,42 +96,56 @@ public class AddCityActivity extends AppCompatActivity {
         recycledViewPool.setMaxRecycledViews(0, 10);
         rvCityList.setRecycledViewPool(recycledViewPool);
 
-        LinkedList<DelegateAdapter.Adapter> adapters = new LinkedList<>();
-
-        HotCityAdapter hotCityAdapter = new HotCityAdapter(this, hotCities);
-        adapters.add(hotCityAdapter);
-
-
-
-        delegateAdapter.setAdapters(adapters);
+        delegateAdapter.setAdapters(createAdapters());
     }
 
-    private void loadAllCities() {
+    private LinkedList<DelegateAdapter.Adapter> createAdapters() {
+        LinkedList<DelegateAdapter.Adapter> adapters = new LinkedList<>();
+
+        String[] titles = {"热门城市：", "A", "B", "C", "D", "E",
+                "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q",
+                "R", "S", "T", "W", "X", "Y", "Z"};
+
+        String[][] cities = loadAllCities();
+
+        for (int i = 0; i < titles.length; i++) {
+            adapters.add(new TitleAdapter(this, titles[i]));
+            adapters.add(new CityNameAdapter(this, cities[i]));
+        }
+
+        return adapters;
+    }
+
+    private String[][] loadAllCities() {
         Resources resources = getResources();
 
-        hotCities = resources.getStringArray(R.array.hotCities);
+        String[] hotCities = resources.getStringArray(R.array.hotCities);
 
-        keyA = resources.getStringArray(R.array.keyA);
-        keyB = resources.getStringArray(R.array.keyB);
-        keyC = resources.getStringArray(R.array.keyC);
-        keyD = resources.getStringArray(R.array.keyD);
-        keyE = resources.getStringArray(R.array.keyE);
-        keyF = resources.getStringArray(R.array.keyF);
-        keyG = resources.getStringArray(R.array.keyG);
-        keyH = resources.getStringArray(R.array.keyH);
-        keyJ = resources.getStringArray(R.array.keyJ);
-        keyK = resources.getStringArray(R.array.keyK);
-        keyL = resources.getStringArray(R.array.keyL);
-        keyM = resources.getStringArray(R.array.keyM);
-        keyN = resources.getStringArray(R.array.keyN);
-        keyP = resources.getStringArray(R.array.keyP);
-        keyQ = resources.getStringArray(R.array.keyQ);
-        keyR = resources.getStringArray(R.array.keyR);
-        keyS = resources.getStringArray(R.array.keyS);
-        keyT = resources.getStringArray(R.array.keyT);
-        keyW = resources.getStringArray(R.array.keyW);
-        keyX = resources.getStringArray(R.array.keyX);
-        keyY = resources.getStringArray(R.array.keyY);
-        keyZ = resources.getStringArray(R.array.keyZ);
+        String[] keyA = resources.getStringArray(R.array.keyA);
+        String[] keyB = resources.getStringArray(R.array.keyB);
+        String[] keyC = resources.getStringArray(R.array.keyC);
+        String[] keyD = resources.getStringArray(R.array.keyD);
+        String[] keyE = resources.getStringArray(R.array.keyE);
+        String[] keyF = resources.getStringArray(R.array.keyF);
+        String[] keyG = resources.getStringArray(R.array.keyG);
+        String[] keyH = resources.getStringArray(R.array.keyH);
+        String[] keyJ = resources.getStringArray(R.array.keyJ);
+        String[] keyK = resources.getStringArray(R.array.keyK);
+        String[] keyL = resources.getStringArray(R.array.keyL);
+        String[] keyM = resources.getStringArray(R.array.keyM);
+        String[] keyN = resources.getStringArray(R.array.keyN);
+        String[] keyP = resources.getStringArray(R.array.keyP);
+        String[] keyQ = resources.getStringArray(R.array.keyQ);
+        String[] keyR = resources.getStringArray(R.array.keyR);
+        String[] keyS = resources.getStringArray(R.array.keyS);
+        String[] keyT = resources.getStringArray(R.array.keyT);
+        String[] keyW = resources.getStringArray(R.array.keyW);
+        String[] keyX = resources.getStringArray(R.array.keyX);
+        String[] keyY = resources.getStringArray(R.array.keyY);
+        String[] keyZ = resources.getStringArray(R.array.keyZ);
+
+        return new String[][]{hotCities, keyA, keyB, keyC, keyD, keyE,
+                keyF, keyG, keyH, keyJ, keyK, keyL, keyM, keyN, keyP,
+                keyQ, keyR, keyS, keyT, keyW, keyX, keyY, keyZ};
     }
 }

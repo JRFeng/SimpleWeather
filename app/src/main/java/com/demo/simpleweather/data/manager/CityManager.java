@@ -35,6 +35,8 @@ public class CityManager {
     private City tempCity;
     private int tempPosition;
 
+    private OnDataChangedListener mListener;
+
     private CityManager() {
         restoreCities();
         initFragments();
@@ -238,6 +240,22 @@ public class CityManager {
         mCityFragments.get(position).suggestRefreshWeather();
     }
 
+    public int getSize() {
+        return mCities.size();
+    }
+
+    public String[] getCityNames() {
+        String[] cities = new String[mCities.size()];
+        for (int i = 0; i < mCities.size(); i++) {
+            cities[i] = mCities.get(i).getName();
+        }
+        return cities;
+    }
+
+    public void setOnDataChangeListener(OnDataChangedListener listener) {
+        mListener = listener;
+    }
+
     //******************private*************
 
     //从本地恢复数据
@@ -274,8 +292,18 @@ public class CityManager {
         //调试
         L.d(SwApplication.TAG, "notifyDataSetChanged");
 
+        if (mListener != null) {
+            mListener.onDataChanged();
+        }
+
         if (mPagerAdapter != null) {
             mPagerAdapter.notifyDataSetChanged();
         }
+    }
+
+    //*********************interface*********************
+
+    public interface OnDataChangedListener {
+        void onDataChanged();
     }
 }

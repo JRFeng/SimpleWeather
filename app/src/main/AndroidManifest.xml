@@ -24,7 +24,9 @@
             android:name="com.amap.api.v2.apikey"
             android:value="63d8ec740a8163b052934399b7fb771e"/>
 
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -34,8 +36,10 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
-        <activity android:name=".activity.AddCityActivity"
-            android:label="@string/addCityActivityName">
+        <activity
+            android:name=".activity.AddCityActivity"
+            android:label="@string/addCityActivityName"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
