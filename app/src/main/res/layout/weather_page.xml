@@ -27,7 +27,7 @@
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/ic_home"
                 android:visibility="gone"
-                tools:ignore="RtlHardcoded"
+                tools:ignore="ContentDescription,RtlHardcoded"
                 tools:visibility="visible"/>
 
             <TextView
@@ -52,7 +52,7 @@
                 android:scaleType="center"
                 android:src="@mipmap/ic_place_white_18dp"
                 android:visibility="gone"
-                tools:ignore="RtlHardcoded"
+                tools:ignore="ContentDescription,RtlHardcoded"
                 tools:visibility="visible"/>
 
             <ImageButton
@@ -62,7 +62,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="8dp"
                 android:background="@drawable/ic_more"
-                tools:ignore="RtlHardcoded"/>
+                tools:ignore="ContentDescription,RtlHardcoded"/>
 
         </RelativeLayout>
 
@@ -117,7 +117,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_arrow_up"/>
+            android:background="@drawable/ic_arrow_up"
+            tools:ignore="ContentDescription"/>
 
     </RelativeLayout>
 
