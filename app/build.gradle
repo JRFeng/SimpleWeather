@@ -25,10 +25,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile files('libs/AMap_Location_V3.4.0_20170427.jar')
-//    26.0.0-alpha 版本的SnakeBar不正常，暂时使用25.3.1版本
+//    26.0.0-alpha 版本的SnakeBar不正常，暂时使用25.3.1版本，建议以后再修改。
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-//    26.0.0-alpha 版本的SnakeBar不正常，暂时使用25.3.1版本
+//    26.0.0-alpha 版本的SnakeBar不正常，暂时使用25.3.1版本，建议以后再修改。
     compile 'com.android.support:design:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 //    RxJava暂时不需要
