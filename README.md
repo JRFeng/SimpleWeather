@@ -24,11 +24,11 @@
 
 **App参考图：**
 
-![home](readme_img/home.png)![forecast](readme_img/forecast.png)
+![home](readme_img/home.png) ![forecast](readme_img/forecast.png)
 
-![other_city](readme_img/other_city.png)![switch_city](readme_img/switch_city.png)
+![other_city](readme_img/other_city.png) ![switch_city](readme_img/switch_city.png)
 
-![refresh](readme_img/refresh.png)![add_city](readme_img/add_city.png)
+![refresh](readme_img/refresh.png) ![add_city](readme_img/add_city.png)
 
 ---
 
