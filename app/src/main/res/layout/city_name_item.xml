@@ -11,12 +11,11 @@
         android:id="@+id/tvHotCityName"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:background="@drawable/bg_hot_city"
+        android:background="@drawable/bg_city_name_item"
         android:clickable="true"
         android:gravity="center"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:textColor="@color/colorAccent"
         android:textSize="14sp"
         tools:text="北京"/>
 

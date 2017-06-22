@@ -27,7 +27,7 @@ public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.Vie
     public CityNameAdapter(Activity activity, String[] hotCities) {
         mActivity = activity;
         mHotCities = hotCities;
-        color = mActivity.getResources().getColor(SwApplication.getSharedData());
+        color = mActivity.getResources().getColor(SwApplication.getSharedData()); //getColor方法是API23才弃用的
     }
 
     @Override
@@ -36,11 +36,11 @@ public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.Vie
         layoutHelper.setPadding(
                 SwApplication.getInstance().getPx(32),
                 SwApplication.getInstance().getPx(8),
-                SwApplication.getInstance().getPx(16),
+                SwApplication.getInstance().getPx(8),
                 SwApplication.getInstance().getPx(8));
 //        layoutHelper.setHGap(SwApplication.getInstance().getPx(32));
 
-        layoutHelper.setBgColor(mActivity.getResources().getColor(android.R.color.white));
+        layoutHelper.setBgColor(mActivity.getResources().getColor(android.R.color.white));//getColor方法是API23才弃用的
         layoutHelper.setAutoExpand(false);
 
         return layoutHelper;
@@ -48,7 +48,7 @@ public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.Vie
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mActivity).inflate(R.layout.city_name_adpter_item, parent, false);
+        View view = LayoutInflater.from(mActivity).inflate(R.layout.city_name_item, parent, false);
         return new ViewHolder(view);
     }
 
