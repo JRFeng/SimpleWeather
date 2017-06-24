@@ -36,7 +36,7 @@ public class CitiesAdapter extends DelegateAdapter.Adapter<CitiesAdapter.ViewHol
         layoutHelper.setPadding(
                 SWApplication.getPx(32),
                 SWApplication.getPx(8),
-                SWApplication.getPx(8),
+                SWApplication.getPx(0),
                 SWApplication.getPx(8));
 //        layoutHelper.setHGap(SWApplication.getInstance().getPx(32));
 

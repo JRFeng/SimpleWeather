@@ -163,6 +163,11 @@ public class Weather implements Parcelable {
         return str;
     }
 
+    /**
+     * 对JSON数据进行解析，并保存到当前Weather对象的对应字段中
+     * @param json 要解析的数据
+     * @return 解析成功则返回true，否则返回false
+     */
     public boolean update(String json) {
         L.d("App", "Update Weather");
         try {
