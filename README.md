@@ -22,6 +22,13 @@
 * 使用[高德地图](http://lbs.amap.com/)定位使用者当前所处的城市。
 * 天气接口使用的是[和风天气](https://www.heweather.com/)提供的免费接口。
 
+**注意：**
+
+* 如果你替换了天气接口，那么请重新实现 Weather 类的 update() 方法。
+* 如果你替用其他定位服务，那么请重新实现 SWApplication 的 location() 方法。
+
+> **提示：城市列表作为字符串资源存放在 strings.xml 文件中，你可以自由修改/修正。**
+
 **App参考图：**
 
 ![home](readme_img/home.png) ![forecast](readme_img/forecast.png)
