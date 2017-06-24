@@ -1,9 +1,13 @@
 package com.demo.simpleweather.activity;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,26 +16,20 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
+import com.demo.simpleweather.adapter.viewpager.CityPagerAdapter;
 import com.demo.simpleweather.data.City;
-import com.demo.simpleweather.data.manager.CityManager;
 import com.demo.simpleweather.R;
-import com.demo.simpleweather.SwApplication;
+import com.demo.simpleweather.SWApplication;
 import com.demo.simpleweather.utils.L;
 
 
-public class MainActivity extends AppCompatActivity implements CityManager.OnDataChangedListener {
+public class MainActivity extends AppCompatActivity {
     private Context mContext;
-    private CityManager mCityManager;
+    private CityPagerAdapter mPagerAdapter;
     private int mCurrentPosition;
     private ViewPager vpContainer;
     private TextView tvIndicator;
 
-    public static final int DATA_CHANGED = 0;
-    public static final int WEATHER_UPDATED = 1;
 
     //********************************Override*******************************
 
@@ -39,26 +37,35 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        L.d(SWApplication.TAG, "MainActivity : onCreate");
 
         L.d("App", "MainActivity : onCreate");
 
         mContext = this;
 
         vpContainer = (ViewPager) findViewById(R.id.vpContainer);
-        mCityManager = CityManager.getInstance();
-        vpContainer.setAdapter(mCityManager.getPagerAdapter(getSupportFragmentManager()));
+        mPagerAdapter = new CityPagerAdapter(getSupportFragmentManager());
+        vpContainer.setAdapter(mPagerAdapter);
 
         tvIndicator = (TextView) findViewById(R.id.tvIndicator);
 
+        //适配6.0的运行时权限
+        if (checkPermission()) {
+            location();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission_group.LOCATION}, 1);
+            location();
+        }
+
         addViewListener();
-        location();
         updateIndicator();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mCityManager.save();
+        mPagerAdapter.save();
+        L.d(SWApplication.TAG, "MainActivity : onDestroy");
     }
 
     @Override
@@ -66,25 +73,36 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             //调试
-            L.d(SwApplication.TAG, "RESULT_OK : " + data.getStringExtra(AddCityActivity.KEY_RESULT));
+            L.d(SWApplication.TAG, "RESULT_OK : " + data.getStringExtra(AddCityActivity.KEY_RESULT));
 
             String cityName = data.getStringExtra(AddCityActivity.KEY_RESULT);
             City newCity = new City(cityName);
-            if (!mCityManager.addCity(newCity)) {
-                if (mCityManager.isFull()) {
+            if (!mPagerAdapter.addCity(newCity)) {
+                if (mPagerAdapter.isFull()) {
                     Toast.makeText(mContext, "最多8个城市", Toast.LENGTH_SHORT).show();
-                } else if (mCityManager.contains(newCity)) {
+                } else if (mPagerAdapter.contains(newCity)) {
                     Toast.makeText(mContext, "已存在", Toast.LENGTH_SHORT).show();
-                    setCurrentPage(mCityManager.getPosition(newCity), false);
+                    setCurrentPage(mPagerAdapter.getPosition(newCity), false);
                 }
             } else {
                 Toast.makeText(mContext, cityName + "：添加成功", Toast.LENGTH_SHORT).show();
-                setCurrentPage(mCityManager.getPosition(newCity), false);
+                setCurrentPage(mPagerAdapter.getPosition(newCity), false);
             }
         } else {//调试else
             //调试
-            L.d(SwApplication.TAG, "RESULT_CANCEL");
+            L.d(SWApplication.TAG, "RESULT_CANCEL");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        L.d(SWApplication.TAG, "-----------------");
+        L.d(SWApplication.TAG, "City Names:");
+        for (String i : mPagerAdapter.getCityNames()) {
+            L.d(SWApplication.TAG, i);
+        }
+        L.d(SWApplication.TAG, "-----------------");
     }
 
     //*****************************public*************************
@@ -99,14 +117,14 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
     }
 
     public int getPosition(City city) {
-        return mCityManager.getPosition(city);
+        return mPagerAdapter.getPosition(city);
     }
 
     public void deleteCity(final City city) {
-        if (mCityManager.getPosition(city) == 0) {
+        if (mPagerAdapter.getPosition(city) == 0) {
             Toast.makeText(mContext, "主页面无法删除", Toast.LENGTH_SHORT).show();
         } else {
-            setCurrentPage(mCityManager.getPosition(city) - 1, true);
+            setCurrentPage(mPagerAdapter.getPosition(city) - 1, true);
             vpContainer.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -121,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
                 @Override
                 public void onPageScrollStateChanged(int state) {
                     if (state == ViewPager.SCROLL_STATE_IDLE) {
-                        mCityManager.deleteCity(city);
+                        mPagerAdapter.deleteCity(city);
                         updateIndicator();
                         vpContainer.removeOnPageChangeListener(this);
                     }
@@ -131,13 +149,13 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
     }
 
     public void undoDelete() {
-        mCityManager.undoDelete();
+        mPagerAdapter.undoDelete();
     }
 
     /**
      * 这个方法的主要的作用是动态修改指示器 tvIndicator 文
-     * 本的颜色，这个功能对 CityFragment.suggestRefreshWeather() 方
-     * 法和 CityFragment.refreshWeather() 方法的依赖度很高，下次重构时请注意！
+     * 本的颜色，这个功能依赖 CityFragment.suggestRefreshWeather() 方
+     * 法和 CityFragment.refreshWeather() 方法。
      */
     public void setIndicatorColorRes(int colorId) {
         tvIndicator.setTextColor(getResources().getColor(colorId));
@@ -146,34 +164,12 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
     //*****************************private******************************
 
     private void location() {
-
-        AMapLocationClientOption option = new AMapLocationClientOption();
-        option.setNeedAddress(true);
-        option.setOnceLocationLatest(true);
-        option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-
-        AMapLocationClient client = new AMapLocationClient(this);
-        client.setLocationOption(option);
-        client.setLocationListener(new AMapLocationListener() {
+        SWApplication.location(new SWApplication.OnLocationListener() {
             @Override
-            public void onLocationChanged(AMapLocation aMapLocation) {
-                if (aMapLocation.getErrorCode() == 0) {
-                    City city = new City(aMapLocation.getCity(), true);
-                    mCityManager.addCity(city);
-                    //调试
-                    L.d(SwApplication.TAG, "定位成功 : " + aMapLocation.getCity());
-                } else {
-                    Toast.makeText(mContext, "定位失败", Toast.LENGTH_SHORT).show();
-
-                    //调试
-                    L.d(SwApplication.TAG, "定位失败 : " + aMapLocation.getErrorCode() + " : " + aMapLocation.getCity());
-                }
+            public void onLocationChanged(City city) {
+                mPagerAdapter.addCity(city);
             }
         });
-
-        //调试
-        L.d(SwApplication.TAG, "开始定位");
-        client.startLocation();
     }
 
     private void addViewListener() {
@@ -186,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
             @Override
             public void onPageSelected(int position) {
                 mCurrentPosition = position;
-                mCityManager.suggestRefreshWeather(position);
+                mPagerAdapter.suggestRefreshWeather(position);
 
                 updateIndicator();
             }
@@ -202,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
             @Override
             public void onClick(View view) {
                 AlertDialog alertDialog = new AlertDialog.Builder(mContext)
-                        .setItems(mCityManager.getCityNames(), new DialogInterface.OnClickListener() {
+                        .setItems(mPagerAdapter.getCityNames(), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 setCurrentPage(i, true);
@@ -215,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
     }
 
     private void updateIndicator() {
-        int size = mCityManager.getSize();
+        int size = mPagerAdapter.getSize();
         if (size > 1) {
             tvIndicator.setVisibility(View.VISIBLE);
             tvIndicator.setText((mCurrentPosition + 1) + "/" + size);
@@ -224,8 +220,8 @@ public class MainActivity extends AppCompatActivity implements CityManager.OnDat
         }
     }
 
-    @Override
-    public void onDataChanged() {
-        updateIndicator();
+    private boolean checkPermission() {
+        int has = ContextCompat.checkSelfPermission(this, Manifest.permission_group.LOCATION);
+        return has == PackageManager.PERMISSION_GRANTED;
     }
 }

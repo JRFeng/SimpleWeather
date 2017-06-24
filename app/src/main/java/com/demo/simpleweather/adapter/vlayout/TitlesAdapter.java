@@ -1,4 +1,4 @@
-package com.demo.simpleweather.adapter;
+package com.demo.simpleweather.adapter.vlayout;
 
 
 import android.content.Context;
@@ -13,13 +13,13 @@ import com.alibaba.android.vlayout.LayoutHelper;
 
 import com.alibaba.android.vlayout.layout.StickyLayoutHelper;
 import com.demo.simpleweather.R;
-import com.demo.simpleweather.SwApplication;
+import com.demo.simpleweather.SWApplication;
 
-public class TitleAdapter extends DelegateAdapter.Adapter<TitleAdapter.ViewHolder> {
+public class TitlesAdapter extends DelegateAdapter.Adapter<TitlesAdapter.ViewHolder> {
     private Context mContext;
     private String mTitle;
 
-    public TitleAdapter(Context context, String title) {
+    public TitlesAdapter(Context context, String title) {
         mContext = context;
         mTitle = title;
     }
@@ -38,7 +38,7 @@ public class TitleAdapter extends DelegateAdapter.Adapter<TitleAdapter.ViewHolde
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.title.setText(mTitle);
-        holder.title.setTextColor(mContext.getResources().getColor(SwApplication.getSharedData()));
+        holder.title.setTextColor(mContext.getResources().getColor(SWApplication.getSharedData()));
     }
 
     @Override

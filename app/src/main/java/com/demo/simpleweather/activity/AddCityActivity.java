@@ -11,9 +11,9 @@ import android.view.MenuItem;
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
 import com.demo.simpleweather.R;
-import com.demo.simpleweather.SwApplication;
-import com.demo.simpleweather.adapter.CityNameAdapter;
-import com.demo.simpleweather.adapter.TitleAdapter;
+import com.demo.simpleweather.SWApplication;
+import com.demo.simpleweather.adapter.vlayout.CitiesAdapter;
+import com.demo.simpleweather.adapter.vlayout.TitlesAdapter;
 
 import java.util.LinkedList;
 
@@ -29,7 +29,7 @@ public class AddCityActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_city);
 
         //保存颜色值
-        SwApplication.setSharedData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
+        SWApplication.setSharedData(getIntent().getIntExtra("weatherColorId", R.color.colorBlue));
 
         //findView
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -83,8 +83,8 @@ public class AddCityActivity extends AppCompatActivity {
         String[][] cities = loadAllCities();
 
         for (int i = 0; i < titles.length; i++) {
-            adapters.add(new TitleAdapter(this, titles[i]));
-            adapters.add(new CityNameAdapter(this, cities[i]));
+            adapters.add(new TitlesAdapter(this, titles[i]));
+            adapters.add(new CitiesAdapter(this, cities[i]));
         }
 
         return adapters;

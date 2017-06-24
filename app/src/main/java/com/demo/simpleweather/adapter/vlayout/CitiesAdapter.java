@@ -1,4 +1,4 @@
-package com.demo.simpleweather.adapter;
+package com.demo.simpleweather.adapter.vlayout;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -14,31 +14,31 @@ import android.widget.TextView;
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.LayoutHelper;
 import com.alibaba.android.vlayout.layout.GridLayoutHelper;
+import com.demo.simpleweather.SWApplication;
 import com.demo.simpleweather.activity.AddCityActivity;
 import com.demo.simpleweather.R;
-import com.demo.simpleweather.SwApplication;
 
 
-public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.ViewHolder> {
+public class CitiesAdapter extends DelegateAdapter.Adapter<CitiesAdapter.ViewHolder> {
     private Activity mActivity;
     private String[] mHotCities;
     private int color;
 
-    public CityNameAdapter(Activity activity, String[] hotCities) {
+    public CitiesAdapter(Activity activity, String[] hotCities) {
         mActivity = activity;
         mHotCities = hotCities;
-        color = mActivity.getResources().getColor(SwApplication.getSharedData()); //getColor方法是API23才弃用的
+        color = mActivity.getResources().getColor(SWApplication.getSharedData()); //getColor方法是API23才弃用的
     }
 
     @Override
     public LayoutHelper onCreateLayoutHelper() {
         GridLayoutHelper layoutHelper = new GridLayoutHelper(3);
         layoutHelper.setPadding(
-                SwApplication.getInstance().getPx(32),
-                SwApplication.getInstance().getPx(8),
-                SwApplication.getInstance().getPx(8),
-                SwApplication.getInstance().getPx(8));
-//        layoutHelper.setHGap(SwApplication.getInstance().getPx(32));
+                SWApplication.getPx(32),
+                SWApplication.getPx(8),
+                SWApplication.getPx(8),
+                SWApplication.getPx(8));
+//        layoutHelper.setHGap(SWApplication.getInstance().getPx(32));
 
         layoutHelper.setBgColor(mActivity.getResources().getColor(android.R.color.white));//getColor方法是API23才弃用的
         layoutHelper.setAutoExpand(false);
@@ -58,7 +58,7 @@ public class CityNameAdapter extends DelegateAdapter.Adapter<CityNameAdapter.Vie
         holder.tvHotCityName.setTextColor(color);
 
         GradientDrawable gradientDrawable = (GradientDrawable) holder.tvHotCityName.getBackground();
-        gradientDrawable.setStroke(SwApplication.getInstance().getPx(1), color);
+        gradientDrawable.setStroke(SWApplication.getPx(1), color);
 
         holder.tvHotCityName.setOnClickListener(new View.OnClickListener() {
             @Override

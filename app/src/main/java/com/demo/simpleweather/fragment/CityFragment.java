@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.simpleweather.R;
-import com.demo.simpleweather.SwApplication;
+import com.demo.simpleweather.SWApplication;
 import com.demo.simpleweather.activity.AddCityActivity;
 import com.demo.simpleweather.activity.MainActivity;
 import com.demo.simpleweather.data.City;
@@ -78,6 +78,8 @@ public class CityFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        L.d(SWApplication.TAG, "创建Fragment View : " + mCity.getName());
+
         mPageView = inflater.inflate(R.layout.weather_page, container, false);
 
 
@@ -113,6 +115,8 @@ public class CityFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         saveData();
+
+        L.d(SWApplication.TAG, "销毁Fragment : " + mCity.getName());
     }
 
     //************************public**********************
@@ -145,40 +149,41 @@ public class CityFragment extends Fragment {
 
         long elapseMinute = getElapseMinute();
 
-        L.d(SwApplication.TAG, "Elapse Minute : " + elapseMinute);
+        L.d(SWApplication.TAG, "Elapse Minute : " + elapseMinute);
 
         if ((elapseMinute >= 15 || mWeather.isNA()) && !mCity.getName().equals("N/A")) {
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 建议刷新 : 接受");
-            L.d(SwApplication.TAG, mCity.getName() + " : Elapse  : " + elapseMinute);
-            L.d(SwApplication.TAG, mCity.getName() + " : IsNa    : " + mWeather.isNA());
+            L.d(SWApplication.TAG, mCity.getName() + " : 建议刷新 : 接受");
+            L.d(SWApplication.TAG, mCity.getName() + " : Elapse  : " + elapseMinute);
+            L.d(SWApplication.TAG, mCity.getName() + " : IsNa    : " + mWeather.isNA());
 
             refreshWeather();
             return true;
         }
         //调试
-        L.d(SwApplication.TAG, mCity.getName() + " : 建议刷新 : 拒绝");
+        L.d(SWApplication.TAG, mCity.getName() + " : 建议刷新 : 拒绝");
         return false;
     }
+
 
     //*************************private**********************
 
     private void initView() {
         //调试
-        L.d(SwApplication.TAG, mCity.getName() + " : initView");
+        L.d(SWApplication.TAG, mCity.getName() + " : initView");
 
         if (isLocation()) {
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 当前定位城市");
+            L.d(SWApplication.TAG, mCity.getName() + " : 当前定位城市");
 
             ivLocationImage.setVisibility(View.VISIBLE);
         } else if (isHome()) {
             //什么也不做
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 当前主页城市（非定位城市）");
+            L.d(SWApplication.TAG, mCity.getName() + " : 当前主页城市（非定位城市）");
         } else {
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 一般城市");
+            L.d(SWApplication.TAG, mCity.getName() + " : 一般城市");
 
             ibHome.setVisibility(View.VISIBLE);
             ibHome.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +196,7 @@ public class CityFragment extends Fragment {
         tvCityName.setText(mCity.getName());
 
         //调试
-        L.d(SwApplication.TAG, mCity.getName() + " : 页面位置 : " + mActivity.getPosition(mCity));
+        L.d(SWApplication.TAG, mCity.getName() + " : 页面位置 : " + mActivity.getPosition(mCity));
     }
 
     private void addViewListener() {
@@ -211,7 +216,7 @@ public class CityFragment extends Fragment {
                     pwMenuView = LayoutInflater.from(getContext()).inflate(R.layout.popup_window_menu, (ViewGroup) mPageView, false);
                     pwMenu = new PopupWindow(
                             pwMenuView,
-                            SwApplication.getInstance().getPx(128),
+                            SWApplication.getPx(128),
                             ViewGroup.LayoutParams.WRAP_CONTENT);
                     pwMenu.setTouchable(true);
                     pwMenu.setFocusable(true);
@@ -243,7 +248,7 @@ public class CityFragment extends Fragment {
                                             public void onClick(View view) {
                                                 mActivity.undoDelete();
                                                 mActivity.setCurrentPage(mActivity.getPosition(mCity), true);
-                                                Toast.makeText(SwApplication.getContext(), "取消成功", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SWApplication.getContext(), "取消成功", Toast.LENGTH_SHORT).show();
                                             }
                                         }).show();
                             }
@@ -306,10 +311,10 @@ public class CityFragment extends Fragment {
             save.apply();
 
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 保存数据到本地 : 成功");
+            L.d(SWApplication.TAG, mCity.getName() + " : 保存数据到本地 : 成功");
         } else {//调试else
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 保存数据到本地 : 失败");
+            L.d(SWApplication.TAG, mCity.getName() + " : 保存数据到本地 : 失败");
         }
     }
 
@@ -319,7 +324,7 @@ public class CityFragment extends Fragment {
 
         if (!mCity.getName().equals("N/A")) {
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 从本地恢复页面数据 : 接受");
+            L.d(SWApplication.TAG, mCity.getName() + " : 从本地恢复页面数据 : 接受");
 
             SharedPreferences savedData = getContext().getSharedPreferences(mCity.getName(), Context.MODE_PRIVATE);
             mWeather.setWeatherStatus(savedData.getString("weatherStatus", "N/A"));
@@ -334,14 +339,23 @@ public class CityFragment extends Fragment {
             mLastRefreshTime = savedData.getLong("lastRefreshTime", 0);
         } else {//调试else
             //调试
-            L.d(SwApplication.TAG, mCity.getName() + " : 从本地恢复页面数据 : 拒绝");
+            L.d(SWApplication.TAG, mCity.getName() + " : 从本地恢复页面数据 : 拒绝");
         }
     }
 
     //刷新天气
     private void refreshWeather() {
         if (mActivity.getCurrentPosition() != mActivity.getPosition(mCity)) {
-            L.d(SwApplication.TAG, mCity.getName() + " : 拒绝刷新");
+            L.d(SWApplication.TAG, mCity.getName() + " : 拒绝刷新");
+            return;
+        }
+
+        if(mCity.getName().equals("N/A")){
+            L.d(SWApplication.TAG, mCity.getName() + " : 拒绝刷新");
+            Toast.makeText(mActivity, "N/A : 无法刷新", Toast.LENGTH_SHORT).show();
+            if (swipeRefresh.isRefreshing()) {
+                swipeRefresh.setRefreshing(false);
+            }
             return;
         }
 
@@ -352,11 +366,11 @@ public class CityFragment extends Fragment {
         String cityName = mCity.getName();
 
         //调试
-        L.d(SwApplication.TAG, cityName + " : refreshWeather : 接受刷新");
-        L.d(SwApplication.TAG, cityName + " : Current position : " + mActivity.getCurrentPosition());
-        L.d(SwApplication.TAG, cityName + " : position : " + mActivity.getPosition(mCity));
+        L.d(SWApplication.TAG, cityName + " : refreshWeather : 接受刷新");
+        L.d(SWApplication.TAG, cityName + " : Current position : " + mActivity.getCurrentPosition());
+        L.d(SWApplication.TAG, cityName + " : position : " + mActivity.getPosition(mCity));
 
-        OkHttpClient okHttpClient = SwApplication.getInstance().getOkHttpClient();
+        OkHttpClient okHttpClient = SWApplication.getOkHttpClient();
         Request request = new Request.Builder()
                 .url("https://free-api.heweather.com/v5/weather?city=" + cityName + "&key=e7068f2051cf4ffd996ae643bd45d27d")
                 .build();
@@ -394,13 +408,13 @@ public class CityFragment extends Fragment {
                             }
 
                             //调试
-                            L.d(SwApplication.TAG, "刷新成功 : " + mCity.getName());
-                            L.d(SwApplication.TAG, "Elapse Minute : " + getElapseMinute());
+                            L.d(SWApplication.TAG, "刷新成功 : " + mCity.getName());
+                            L.d(SWApplication.TAG, "Elapse Minute : " + getElapseMinute());
                         } else {
                             Toast.makeText(mActivity, mCity.getName() + "：更新失败", Toast.LENGTH_SHORT).show();
 
                             //调试
-                            L.d(SwApplication.TAG, "刷新失败 : status 异常 : " + mCity.getName());
+                            L.d(SWApplication.TAG, "刷新失败 : status 异常 : " + mCity.getName());
                         }
                     }
                 });
@@ -411,7 +425,7 @@ public class CityFragment extends Fragment {
     //根据天气信息刷新视图
     private void refreshView() {
         //调试
-        L.d(SwApplication.TAG, mCity.getName() + " : 刷新View");
+        L.d(SWApplication.TAG, mCity.getName() + " : 刷新View");
 
         tvCurrentTmp.setText(mWeather.getCurrentTmp());
         tvWeatherStatus.setText(mWeather.getWeatherStatus());
