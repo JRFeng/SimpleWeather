@@ -75,6 +75,9 @@
         <item>常州</item>
         <item>常德</item>
         <item>昌都</item>
+        <item>长春</item>
+        <item>长沙</item>
+        <item>长治</item>
         <item>池州</item>
         <item>楚雄</item>
         <item>昌吉</item>
@@ -431,10 +434,8 @@
 
     <!--Z-->
     <string-array name="keyZ">
-        <item>长治</item>
         <item>湛江</item>
         <item>肇庆</item>
-        <item>长春</item>
         <item>淄博</item>
         <item>舟山</item>
         <item>自贡</item>
@@ -444,7 +445,6 @@
         <item>张掖</item>
         <item>郑州</item>
         <item>遵义</item>
-        <item>长沙</item>
         <item>株洲</item>
         <item>漳州</item>
         <item>枣庄</item>
