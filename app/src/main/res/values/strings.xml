@@ -7,7 +7,39 @@
     <string name="menu_delete">删除</string>
 
     <string name="addCityActivityName">添加</string>
-    
+
+    <!--无法获取天气状况的城市-->
+    <string-array name="noWeather">
+        <!--A-->
+        <item>阿拉尔</item>
+        <item>阿拉善盟</item>
+
+        <!--B-->
+        <item>巴彦淖尔</item>
+        <item>巴音郭楞</item>
+        <item>博尔塔拉</item>
+
+        <!--H-->
+        <item>呼伦贝尔</item>
+
+        <!--K-->
+        <item>喀什</item>
+        <item>克孜勒</item>
+
+        <!--S-->
+        <item>神农架</item>
+
+        <!--T-->
+        <item>图木舒克</item>
+
+        <!--X-->
+        <item>湘西</item>
+        <item>香港</item>
+        <item>兴安盟</item>
+        <item>锡林郭勒</item>
+        <item>西双版纳</item>
+    </string-array>
+
     <!--热门城市-->
     <string-array name="hotCities">
         <item>北京</item>
@@ -34,10 +66,8 @@
         <item>安顺</item>
         <item>鞍山</item>
         <item>阿坝</item>
-        <item>阿拉尔</item>
         <item>阿勒泰</item>
         <item>阿克苏</item>
-        <item>阿拉善盟</item>
     </string-array>
 
     <!--B-->
@@ -58,9 +88,6 @@
         <item>保山</item>
         <item>白城</item>
         <item>白银</item>
-        <item>巴彦淖尔</item>
-        <item>巴音郭楞</item>
-        <item>博尔塔拉</item>
     </string-array>
 
     <!--C-->
@@ -174,7 +201,6 @@
         <item>葫芦岛</item>
         <item>哈尔滨</item>
         <item>呼和浩特</item>
-        <item>呼伦贝尔</item>
     </string-array>
 
     <!--J-->
@@ -206,8 +232,6 @@
     <string-array name="keyK">
         <item>开封</item>
         <item>昆明</item>
-        <item>喀什</item>
-        <item>克孜勒</item>
         <item>克拉玛依</item>
     </string-array>
 
@@ -334,7 +358,6 @@
         <item>石河子</item>
         <item>石嘴山</item>
         <item>双鸭山</item>
-        <item>神农架</item>
         <item>石家庄</item>
         <item>三门峡</item>
     </string-array>
@@ -357,7 +380,6 @@
         <item>天水</item>
         <item>台湾</item>
         <item>吐鲁番</item>
-        <item>图木舒克</item>
     </string-array>
 
     <!--W-->
@@ -387,7 +409,6 @@
         <item>襄樊</item>
         <item>信阳</item>
         <item>新乡</item>
-        <item>湘西</item>
         <item>邢台</item>
         <item>新余</item>
         <item>许昌</item>
@@ -396,11 +417,7 @@
         <item>西宁</item>
         <item>咸阳</item>
         <item>咸宁</item>
-        <item>香港</item>
         <item>西安市</item>
-        <item>兴安盟</item>
-        <item>锡林郭勒</item>
-        <item>西双版纳</item>
     </string-array>
 
     <!--Y-->
