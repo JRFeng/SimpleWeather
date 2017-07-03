@@ -32,6 +32,9 @@
         <!--T-->
         <item>图木舒克</item>
 
+        <!--W-->
+        <item>乌兰察布</item>
+
         <!--X-->
         <item>湘西</item>
         <item>香港</item>
@@ -398,7 +401,6 @@
         <item>文山</item>
         <item>五家渠</item>
         <item>乌鲁木齐</item>
-        <item>乌兰察布</item>
     </string-array>
 
     <!--X-->
